@@ -72,7 +72,7 @@ class GameWindow : public Gosu::Window
 
 public:
 
-    GameWindow() : Window(850, 600), Bildplayer("rakete.png")
+    GameWindow() : Window(850, 600), Bildplayer("biene.png")
     {
         set_caption("Flappy Biene");
     }
@@ -97,6 +97,10 @@ public:
         y_verschiebung3 = -100;
         speed_increase_at_score = 1;
         score_increase = 0.016;
+        score = 0;
+        TimeDelayDeth = 0;        //Zeitdelay nach Tod
+        rundenzaehler = 0;
+        gestorben = false;
     }
 
     void draw() override
@@ -104,7 +108,10 @@ public:
         string punkte = to_string(score);
 
         if (spieler.get_status()) {
-            Bildplayer.draw_rot(x_player, y_player, 2, rot);
+            Bildplayer.draw_rot(x_player, y_player, 2, rot
+            ,0.5,0.5,
+               0.1,0.1
+            );
 
             graphics().draw_quad(
                 x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::WHITE,
@@ -285,9 +292,6 @@ public:
         }
         else {  //Menübildschierm 
             if (maus_x >= 375 && maus_x <= 475 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {  //wenn im Menubild auf Play gedrückt wird, 
-                score = 0;
-                TimeDelayDeth = 0;
-                gestorben = false;
                 restart();
                 spieler.set_status(true);                                                                                                                                                                           //wird Player Status auf false zurückgesetzt und das Spiel somit gestartet                              
                 rundenzaehler++;
