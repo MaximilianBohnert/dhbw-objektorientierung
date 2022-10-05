@@ -39,6 +39,7 @@ class GameWindow : public Gosu::Window
     Gosu::Font anzeige_runde = { 30 };
     Player spieler;
     Gosu::Image Bildplayer;
+    Gosu::Image Hintergrund;
 
     const double BalkenYBoden = 600;
     const double BalkenYDecke = 0;
@@ -72,7 +73,7 @@ class GameWindow : public Gosu::Window
 
 public:
 
-    GameWindow() : Window(850, 600), Bildplayer("biene.png")
+    GameWindow() : Window(850, 600), Bildplayer("biene.png"),Hintergrund("pixelhimmel.png")
     {
         set_caption("Flappy Biene");
     }
@@ -112,6 +113,7 @@ public:
             ,0.5,0.5,
                0.1,0.1
             );
+            Hintergrund.draw(0, 0, 0, 2, 2);
 
             graphics().draw_quad(
                 x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::WHITE,
