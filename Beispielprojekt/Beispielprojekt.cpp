@@ -189,9 +189,9 @@ public:
             if (spieler.get_highscore() < score)
                 spieler.set_highscore(score);
 
-            graphics().draw_quad(0, 0, Gosu::Color::GREEN, 0, 600, Gosu::Color::GREEN, 850, 600, Gosu::Color::GREEN, 850, 0, Gosu::Color::GREEN, 4);
-            graphics().draw_quad(375, 270, Gosu::Color::BLUE, 375, 330, Gosu::Color::BLUE, 475, 330, Gosu::Color::BLUE, 475, 270, Gosu::Color::BLUE, 4);
-            Gosu::Font(30).draw_text("PLAY", 390, 285, 4, 1, 1, Gosu::Color::BLACK);
+            graphics().draw_quad(0, 0, Gosu::Color::GREEN, 0, 600, Gosu::Color::GREEN, 850, 600, Gosu::Color::GREEN, 850, 0, Gosu::Color::GREEN, 0);
+            graphics().draw_quad(375, 270, Gosu::Color::BLUE, 375, 330, Gosu::Color::BLUE, 475, 330, Gosu::Color::BLUE, 475, 270, Gosu::Color::BLUE, 1);
+            Gosu::Font(30).draw_text_rel("PLAY", 425, 300, 2, 0.5, 0.5,1,1 ,Gosu::Color::BLACK);
 
 
             string highscore_s = to_string(spieler.get_highscore());
@@ -199,9 +199,9 @@ public:
 
             string runde = to_string(rundenzaehler);
             if (rundenzaehler > 0)
-                anzeige_runde.draw_text("Runde: " + runde, 0, 530, 4, 1, 1, Gosu::Color::BLACK);
+                anzeige_runde.draw_text("Runde: " + runde, 0, 530, 2, 1, 1, Gosu::Color::BLACK);
 
-            anzeige_score.draw_text("Score: " + punkte, 0, 570, 4, 1, 1, Gosu::Color::BLACK);
+            anzeige_score.draw_text_rel("Score: " + punkte, 0, 600, 2,0,1, 1, 1, Gosu::Color::BLACK);
         }
     }
 
