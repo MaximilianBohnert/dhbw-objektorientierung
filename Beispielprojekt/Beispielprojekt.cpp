@@ -116,11 +116,11 @@ public:
             Hintergrund.draw(0, 0, 0, 2, 2);
 
             graphics().draw_quad(
-                x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::WHITE,
-                x2, BalkenYMitteUnten + y_verschiebung, Gosu::Color::WHITE,
-                x2, BalkenYBoden, Gosu::Color::WHITE,
-                x1, BalkenYBoden, Gosu::Color::WHITE,
-                1
+                x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::GREEN,
+                x2, BalkenYMitteUnten + y_verschiebung, Gosu::Color::GREEN,
+                x2, BalkenYBoden, Gosu::Color::GREEN,
+                x1, BalkenYBoden, Gosu::Color::GREEN,
+                1 
             );
 
             graphics().draw_quad(
