@@ -40,10 +40,19 @@ public:
     }
     bool get_status() { return this->game_status; }
     void set_status(bool status) { this->game_status = status; }
-
-
 };
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+struct SpaceAsteorid {
+    const int AsteroidBreite = 30;
+    const int AsteroidLaenge = 30;
+    const int AsteroidPos = 2;
+    const Gosu::Color FarbeAsteroid = Gosu::Color::GRAY;
+    double AsteroidX;
+    double AsteroidY;
+};
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class GameWindow : public Gosu::Window
 {
@@ -108,6 +117,21 @@ class GameWindow : public Gosu::Window
     bool spielstatus = false;
     bool initial_start = true;
 
+    //Space Spiel /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Gosu::Font anzeige_score_Space = { 30 };
+    Gosu::Font anzeige_restart_Space = { 30 };
+    Gosu::Font anzeige_start_Space = { 30 };
+    const double SpaceBeeX = 50;
+    double  SpaceBeeY =400;
+    int SpaceScore;
+    int rotationSpace = 270;
+    vector<SpaceAsteorid> Asteroiden;
+    double SpaceSpeed = 3;
+    bool SpaceSpielen = false;
+    int AstAnzahl = 0;
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+
 public:
 
     GameWindow() : Window(1000, 600), Bildplayer("biene.png"),Hintergrund("pixelhimmel.png")
@@ -155,15 +179,43 @@ public:
         spielstatus = true;
         pause = false;
     }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void restart_space() {
+        Asteroiden.clear();
+        
+        SpaceBeeY = 400;
+        SpaceScore = 0;
+        gestorben = false;
+        SpaceSpielen = true;
+        AstAnzahl = 0;
 
+    }
+    void erstelleAsteroid(vector<SpaceAsteorid>& AstVect) {
+        double y = Gosu::random(0, 800);
+        SpaceAsteorid ast;
+        ast.AsteroidX = 1000;
+        ast.AsteroidY = y;
+        AstVect.push_back(ast);
+    }/*
+    void AstInRange(vector<SpaceAsteorid>& AstVect) {
+        for (int laenge = 0; laenge <= AstVect.size()-1;laenge++) {
+            if (AstVect.at(laenge).AsteroidX <= (0-(AstVect.at(laenge).AsteroidBreite / 2))) {
+                erase(AstVect, AstVect[laenge]);   //Löscht Objekte die auserhalb des Feldes sind
+            }
+        }
+    }*/
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void draw() override
     {
         if (spiel_auswahl == 0) {
 
-            graphics().draw_quad(200, 270, Gosu::Color::BLUE, 200, 330, Gosu::Color::BLUE, 400, 330, Gosu::Color::BLUE, 400, 270, Gosu::Color::BLUE, 1);
-            graphics().draw_quad(620, 270, Gosu::Color::BLUE, 620, 330, Gosu::Color::BLUE, 780, 330, Gosu::Color::BLUE, 780, 270, Gosu::Color::BLUE, 1);
-            auswahl_flappy_biene.draw_text_rel("Flappy Biene", 300, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
-            auswahl_snake.draw_text_rel("Snake", 700, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
+            graphics().draw_quad(150, 270, Gosu::Color::BLUE, 150, 330, Gosu::Color::BLUE, 350, 330, Gosu::Color::BLUE, 350, 270, Gosu::Color::BLUE, 1);
+            graphics().draw_quad(670, 270, Gosu::Color::BLUE, 670, 330, Gosu::Color::BLUE, 830, 330, Gosu::Color::BLUE, 830, 270, Gosu::Color::BLUE, 1);
+            graphics().draw_quad(430, 270, Gosu::Color::BLUE, 430, 330, Gosu::Color::BLUE, 600, 330, Gosu::Color::BLUE, 600, 270, Gosu::Color::BLUE, 1);
+
+            auswahl_flappy_biene.draw_text_rel("Flappy Biene", 250, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
+            auswahl_snake.draw_text_rel("Snake", 750, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
+            auswahl_flappy_biene.draw_text_rel("Space", 515, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
         }
 
         if (spiel_auswahl == 1) {
@@ -333,10 +385,22 @@ public:
                 }
             }
 
+        }   
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (spiel_auswahl == 3) {
+            if (SpaceSpielen) {
+                Bildplayer.draw_rot(SpaceBeeX, SpaceBeeY, 2, rotationSpace
+                    , 0.5, 0.5,
+                    0.1, 0.1
+                );
 
-            
-        }       
+                for (SpaceAsteorid ast : Asteroiden) {
+                    graphics().draw_rect(ast.AsteroidX, ast.AsteroidY, ast.AsteroidLaenge, ast.AsteroidBreite, ast.FarbeAsteroid, ast.AsteroidPos);
+                }
+            }
+        }
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
     // Wird 60x pro Sekunde aufgerufen
@@ -347,12 +411,17 @@ public:
         maus_y = input().mouse_y();
 
         if (spiel_auswahl == 0) {
-            if (maus_x >= 200 && maus_x <= 400 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
+            if (maus_x >= 150 && maus_x <= 350 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
                 spiel_auswahl = 1;
             }
-            if (maus_x >= 620 && maus_x <= 780 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
+            else if (maus_x >= 670 && maus_x <= 830 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
                 spiel_auswahl = 2;
-                spielstatus = false;
+               // spielstatus = false;
+            }
+            else if (maus_x >= 430 && maus_x <= 600 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
+                spiel_auswahl = 3;
+                SpaceSpielen = true;
+               
             }
         }
 
@@ -410,7 +479,6 @@ public:
                     score += 1;
                     score_zaehler = 0;
                 }
-
                 if (score == speed_increase_at_score) {             //wenn bestimmter Score erreicht wird, steigt Geschwindigkeit, Score_increase -> passiert alle 50 Score Punkte
                     velocity_flappy_biene++;
                     speed_increase_at_score += speed_increase_at_score;
@@ -632,7 +700,36 @@ public:
             }
 
         }      
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        if (spiel_auswahl == 3) {
+            if (!gestorben) {
+                AstAnzahl--;
+                if (input().down(Gosu::Button::KB_UP)) {
+                    SpaceBeeY -= (SpaceSpeed + 2);
+                }
+                else if (input().down(Gosu::Button::KB_DOWN)) {
+                    SpaceBeeY += SpaceSpeed + 2;
+                }
+                if (AstAnzahl <= 1) {
+                    AstAnzahl = 30;
+                    erstelleAsteroid(Asteroiden);
+                }
 
+            }
+            for (SpaceAsteorid& ast : Asteroiden) {
+                ast.AsteroidX = ast.AsteroidX - SpaceSpeed;
+                if ((SpaceBeeX <= (ast.AsteroidX + (ast.AsteroidBreite / 2)) && SpaceBeeX >= (ast.AsteroidX - (ast.AsteroidBreite / 2))) && 
+                    (SpaceBeeY <= (ast.AsteroidY - (ast.AsteroidLaenge / 2)) && SpaceBeeY >= (ast.AsteroidY + (ast.AsteroidLaenge / 2)))) 
+                {
+                    gestorben = true;
+                    break;
+                }
+            }
+
+            if (SpaceBeeY > 600 || SpaceBeeY< 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
+                gestorben = true;
+        }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 };
 
