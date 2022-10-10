@@ -541,11 +541,8 @@ public:
                         else if (it_außen_hinten->y_pos > it_außen_vorn->y_pos + 1 + hitobx_increase)
                             it_außen_hinten->y_pos -= velocity_snake;
                         else {
-                            while (it_außen_hinten->y_pos < it_außen_vorn->y_pos) {
-                                it_außen_hinten->y_pos += 1;
-                            }
-                            while (it_außen_hinten->y_pos > it_außen_vorn->y_pos) {
-                                it_außen_hinten->y_pos -= 1;
+                            if (it_außen_hinten->y_pos != it_außen_vorn->y_pos) {
+                                it_außen_hinten->y_pos = it_außen_vorn->y_pos;
                             }
                             if (it_außen_vorn->richtung == 1) {
                                 if (it_außen_hinten->x_pos != it_außen_vorn->x_pos - 25) {
@@ -572,11 +569,8 @@ public:
                         else if (it_außen_hinten->x_pos > it_außen_vorn->x_pos + 1 + hitobx_increase)
                             it_außen_hinten->x_pos -= velocity_snake;
                         else {
-                            while (it_außen_hinten->x_pos < it_außen_vorn->x_pos) {
-                                it_außen_hinten->x_pos += 1;
-                            }
-                            while (it_außen_hinten->x_pos > it_außen_vorn->x_pos) {
-                                it_außen_hinten->x_pos -= 1;
+                            if (it_außen_hinten->x_pos != it_außen_vorn->x_pos) {
+                                it_außen_hinten->x_pos = it_außen_vorn->x_pos;
                             }
                             if (it_außen_vorn->richtung == 3) {
                                 if (it_außen_hinten->y_pos != it_außen_vorn->y_pos + 25) {
