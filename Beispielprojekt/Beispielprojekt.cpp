@@ -235,7 +235,7 @@ public:
         AstVect.push_back(ast);
     }
     
-    void AstInRange() {
+    void AstInRange() {                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!     diese Funktion ist fürs abstürzen verantworlich
         vector<SpaceAsteorid> hilfsvector;
         vector<NahKapfstachel> helpStachel;
         bool raus = false;
@@ -794,9 +794,7 @@ public:
                 AstAnzahl--;
                 stachelzahl++;
                 
-                if (Asteroiden.size() != 0) {
-                   AstInRange();
-                }
+                
                 
                 
                 if (input().down(Gosu::Button::KB_UP)) {
@@ -808,7 +806,9 @@ public:
                 if (AstAnzahl <= 1) {
                     AstAnzahl = 30;
                     erstelleAsteroid(Asteroiden);
-                    
+                    if (Asteroiden.size() != 0) {
+                        AstInRange();
+                    }
                 }
                 if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=20) {
                     stachel.push_back(neuerStachel(SpaceBeeX, SpaceBeeY));
