@@ -129,6 +129,7 @@ class GameWindow : public Gosu::Window
     double SpaceSpeed = 3;
     bool SpaceSpielen = false;
     int AstAnzahl = 0;
+    double stachelSpeed = 5;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
 
@@ -181,8 +182,7 @@ public:
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void restart_space() {
-        Asteroiden.clear();
-        
+        Asteroiden.clear();     
         SpaceBeeY = 400;
         SpaceScore = 0;
         gestorben = false;
@@ -190,20 +190,42 @@ public:
         AstAnzahl = 0;
 
     }
+    /*void AstAnStelleLoeschen(int stelle, vector<SpaceAsteorid>& ast) {
+        vector<SpaceAsteorid> hilfsvector;
+        for (int laenge = 0; laenge < ast.size(); laenge++) {
+            if (laenge != stelle) {
+                hilfsvector.push_back(ast.at(laenge));
+            }
+        }
+        ast = hilfsvector;
+
+    }
+    */
+
     void erstelleAsteroid(vector<SpaceAsteorid>& AstVect) {
         double y = Gosu::random(0, 800);
         SpaceAsteorid ast;
         ast.AsteroidX = 1000;
         ast.AsteroidY = y;
         AstVect.push_back(ast);
-    }/*
-    void AstInRange(vector<SpaceAsteorid>& AstVect) {
-        for (int laenge = 0; laenge <= AstVect.size()-1;laenge++) {
-            if (AstVect.at(laenge).AsteroidX <= (0-(AstVect.at(laenge).AsteroidBreite / 2))) {
-                erase(AstVect, AstVect[laenge]);   //Löscht Objekte die auserhalb des Feldes sind
+    }
+    
+    void AstInRange() {    
+        
+        vector<SpaceAsteorid> hilfsvector;
+        for (int laenge = 0; laenge < Asteroiden.size();laenge++) {
+            if (Asteroiden.at(laenge).AsteroidX <= (200.0-double(Asteroiden.at(laenge).AsteroidBreite / 2))) {
+            }
+            else {
+                hilfsvector.push_back(Asteroiden.at(laenge));
             }
         }
-    }*/
+        Asteroiden.clear();
+        for (SpaceAsteorid sa:hilfsvector) {
+            Asteroiden.push_back(sa);
+        }
+    }
+  
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void draw() override
     {
@@ -421,6 +443,7 @@ public:
             else if (maus_x >= 430 && maus_x <= 600 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
                 spiel_auswahl = 3;
                 SpaceSpielen = true;
+                restart_space();
                
             }
         }
@@ -673,8 +696,6 @@ public:
                 return;
             }
 
-
-
             if (snake.size() == bonus_increase_abfrage && anzahl_bonus < 5) {
                 anzahl_bonus++;
                 bonus_increase_abfrage += bonus_increase_at;
@@ -704,6 +725,10 @@ public:
         if (spiel_auswahl == 3) {
             if (!gestorben) {
                 AstAnzahl--;
+                
+                if (Asteroiden.size() != 0) {
+                   // AstInRange(Asteroiden);
+                }
                 if (input().down(Gosu::Button::KB_UP)) {
                     SpaceBeeY -= (SpaceSpeed + 2);
                 }
