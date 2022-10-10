@@ -51,7 +51,24 @@ struct SpaceAsteorid {
     const Gosu::Color FarbeAsteroid = Gosu::Color::GRAY;
     double AsteroidX;
     double AsteroidY;
+    bool hit = false;
 };
+
+struct NahKapfstachel
+{
+    const int StachelBreite = 5;
+    const int StachelHoehe = 3;
+    const int StachelPos = 2;
+    const Gosu::Color FarbeStachel = Gosu::Color::RED;
+    double stachelX;
+    double stachelY;
+};
+NahKapfstachel neuerStachel(double x,double y) {
+    NahKapfstachel st;
+    st.stachelX = x;
+    st.stachelY = y;
+    return st;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class GameWindow : public Gosu::Window
@@ -126,10 +143,14 @@ class GameWindow : public Gosu::Window
     int SpaceScore;
     int rotationSpace = 270;
     vector<SpaceAsteorid> Asteroiden;
+    vector<NahKapfstachel> stachel;
     double SpaceSpeed = 3;
     bool SpaceSpielen = false;
     int AstAnzahl = 0;
     double stachelSpeed = 5;
+    int ScoreNichtZerstoert;
+    double stachelspeed = 4;
+    int stachelzahl;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
 
@@ -182,12 +203,16 @@ public:
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void restart_space() {
-        Asteroiden.clear();     
+        Asteroiden.clear(); 
+        stachel.clear();
         SpaceBeeY = 400;
         SpaceScore = 0;
         gestorben = false;
         SpaceSpielen = true;
         AstAnzahl = 0;
+        ScoreNichtZerstoert = 0;
+        stachelSpeed = 4;
+        stachelzahl = 0;
 
     }
     /*void AstAnStelleLoeschen(int stelle, vector<SpaceAsteorid>& ast) {
@@ -210,22 +235,62 @@ public:
         AstVect.push_back(ast);
     }
     
-    void AstInRange() {    
-        
+    void AstInRange() {
         vector<SpaceAsteorid> hilfsvector;
-        for (int laenge = 0; laenge < Asteroiden.size();laenge++) {
-            if (Asteroiden.at(laenge).AsteroidX <= (200.0-double(Asteroiden.at(laenge).AsteroidBreite / 2))) {
+        vector<NahKapfstachel> helpStachel;
+        bool raus = false;
+        bool AstRaus = false;
+       
+
+        for (SpaceAsteorid& ast : Asteroiden) {
+            if (stachel.size() == 0) {
+                if (ast.AsteroidX <= (0.0 - double(ast.AsteroidBreite / 2))) {
+                    ScoreNichtZerstoert++;
+                }
+                else {
+                    hilfsvector.push_back(ast);
+                }
             }
             else {
-                hilfsvector.push_back(Asteroiden.at(laenge));
+                for (NahKapfstachel st : stachel) {
+
+                    if (st.stachelX <= (ast.AsteroidX - (ast.AsteroidBreite / 2)) && st.stachelX >= (ast.AsteroidX + (ast.AsteroidBreite / 2))
+                        && st.stachelY <= (ast.AsteroidY - (ast.AsteroidLaenge / 2)) && st.stachelY >= (ast.AsteroidY + (ast.AsteroidLaenge / 2))) {
+                        SpaceScore++;
+                        raus = true;
+                        AstRaus = true;
+                    }
+                    if (ast.AsteroidX <= (0.0 - double(ast.AsteroidBreite / 2))) {
+                        ScoreNichtZerstoert++;
+                        AstRaus = true;
+                    }
+                    if (st.stachelX >= 900.0) {
+                        raus = true;
+                    }
+
+                    if (AstRaus == false) {
+                        hilfsvector.push_back(ast);
+                    }
+                    if (raus == false) {
+                        helpStachel.push_back(st);
+                    }
+                    raus = false;
+                    AstRaus = false;
+                }
             }
         }
-        Asteroiden.clear();
-        for (SpaceAsteorid sa:hilfsvector) {
-            Asteroiden.push_back(sa);
+
+            Asteroiden.clear(); //Asteroiden muss gelöscht werden und neu beschrieben sonst kommt es zu Compilerfehler
+            for (SpaceAsteorid sa : hilfsvector) {
+                Asteroiden.push_back(sa);
+            }
+            stachel.clear();
+            for (NahKapfstachel st : helpStachel) {
+                stachel.push_back(st);
+            }
+
         }
-    }
-  
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void draw() override
     {
@@ -415,9 +480,11 @@ public:
                     , 0.5, 0.5,
                     0.1, 0.1
                 );
-
                 for (SpaceAsteorid ast : Asteroiden) {
                     graphics().draw_rect(ast.AsteroidX, ast.AsteroidY, ast.AsteroidLaenge, ast.AsteroidBreite, ast.FarbeAsteroid, ast.AsteroidPos);
+                }
+                for (NahKapfstachel st : stachel) {
+                    graphics().draw_rect(st.stachelX, st.stachelY, st.StachelBreite, st.StachelHoehe, st.FarbeStachel, st.StachelHoehe);
                 }
             }
         }
@@ -725,10 +792,13 @@ public:
         if (spiel_auswahl == 3) {
             if (!gestorben) {
                 AstAnzahl--;
+                stachelzahl++;
                 
                 if (Asteroiden.size() != 0) {
-                   // AstInRange(Asteroiden);
+                   AstInRange();
                 }
+                
+                
                 if (input().down(Gosu::Button::KB_UP)) {
                     SpaceBeeY -= (SpaceSpeed + 2);
                 }
@@ -738,8 +808,12 @@ public:
                 if (AstAnzahl <= 1) {
                     AstAnzahl = 30;
                     erstelleAsteroid(Asteroiden);
+                    
                 }
-
+                if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=20) {
+                    stachel.push_back(neuerStachel(SpaceBeeX, SpaceBeeY));
+                    stachelzahl = 0;
+                }
             }
             for (SpaceAsteorid& ast : Asteroiden) {
                 ast.AsteroidX = ast.AsteroidX - SpaceSpeed;
@@ -749,6 +823,9 @@ public:
                     gestorben = true;
                     break;
                 }
+            }
+            for (NahKapfstachel& st : stachel) {
+                st.stachelX += stachelspeed;
             }
 
             if (SpaceBeeY > 600 || SpaceBeeY< 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
