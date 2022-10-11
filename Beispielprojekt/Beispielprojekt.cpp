@@ -151,6 +151,9 @@ class GameWindow : public Gosu::Window
     int ScoreNichtZerstoert;
     double stachelspeed = 4;
     int stachelzahl;
+    double SpaceSpeedincrease = 1.08;
+    bool Space_Speed_increase = false;
+    int Space_Speed_increase_at = 5;
     Gosu::Image SpaceHintergrund;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -207,6 +210,7 @@ public:
         stachel.clear();
         SpaceBeeY = 400;
         SpaceScore = 0;
+        SpaceSpeed = 3;
         gestorben = false;
         SpaceSpielen = true;
         AstAnzahl = 0;
@@ -235,6 +239,7 @@ public:
             }
             else if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
+                Space_Speed_increase = true;
                 Asteroiden.at(ast).hit = true;
             }
             else {
@@ -836,6 +841,10 @@ public:
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 3) {
             if (!gestorben) {
+                if (SpaceScore % Space_Speed_increase_at == 0 && Space_Speed_increase) {
+                    SpaceSpeed = SpaceSpeed * SpaceSpeedincrease;
+                    Space_Speed_increase = false;
+                }
                 AstAnzahl--;
                 stachelzahl++;
                 
