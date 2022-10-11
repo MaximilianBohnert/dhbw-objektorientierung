@@ -52,6 +52,8 @@ struct SpaceAsteorid {
     double AsteroidX;
     double AsteroidY;
     bool hit = false;
+    double halbebreite = 15;
+    double halbehoehe = 15;
 };
 
 struct NahKapfstachel
@@ -68,6 +70,7 @@ NahKapfstachel neuerStachel(double x,double y) {
     st.stachelX = x;
     st.stachelY = y;
     return st;
+    bool existent = true;
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -239,58 +242,72 @@ public:
         vector<SpaceAsteorid> hilfsvector;
         vector<NahKapfstachel> helpStachel;
         bool raus = false;
-        bool AstRaus = false;
-       
+        bool AstRaus = false;  
+        for (int ast = 0; ast < Asteroiden.size(); ast++) {
+            
 
-        for (SpaceAsteorid& ast : Asteroiden) {
             if (stachel.size() == 0) {
-                if (ast.AsteroidX <= (0.0 - double(ast.AsteroidBreite / 2))) {
+                if (Asteroiden.at(ast).AsteroidX <= (0.0 - double(Asteroiden.at(ast).AsteroidBreite / 2))) {
                     ScoreNichtZerstoert++;
                 }
                 else {
-                    hilfsvector.push_back(ast);
+                    hilfsvector.push_back(Asteroiden.at(ast));
                 }
             }
             else {
-                for (NahKapfstachel st : stachel) {
-
-                    if (st.stachelX <= (ast.AsteroidX - (ast.AsteroidBreite / 2)) && st.stachelX >= (ast.AsteroidX + (ast.AsteroidBreite / 2))
-                        && st.stachelY <= (ast.AsteroidY - (ast.AsteroidLaenge / 2)) && st.stachelY >= (ast.AsteroidY + (ast.AsteroidLaenge / 2))) {
+                for (int st = 0; st < stachel.size(); st++) {
+                    if (stachel.at(st).stachelX >= (Asteroiden.at(ast).AsteroidX - Asteroiden.at(ast).halbebreite) && stachel.at(st).stachelX <= (Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).halbebreite)
+                        && stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY - Asteroiden.at(ast).halbehoehe) && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY + Asteroiden.at(ast).halbehoehe)) {
                         SpaceScore++;
-                        raus = true;
-                        AstRaus = true;
+                       // raus = true;
+                       // AstRaus = true;
                     }
-                    if (ast.AsteroidX <= (0.0 - double(ast.AsteroidBreite / 2))) {
+                    if (Asteroiden.at(ast).AsteroidX <= (0.0 - double(Asteroiden.at(ast).AsteroidBreite / 2))) {
                         ScoreNichtZerstoert++;
                         AstRaus = true;
                     }
-                    if (st.stachelX >= 900.0) {
+                    if (stachel.at(st).stachelX >= 900.0) {
                         raus = true;
                     }
-
                     if (AstRaus == false) {
-                        hilfsvector.push_back(ast);
+                        hilfsvector.push_back(Asteroiden.at(ast));
                     }
                     if (raus == false) {
-                        helpStachel.push_back(st);
+                        helpStachel.push_back(stachel.at(st));
                     }
-                    raus = false;
-                    AstRaus = false;
+                    //raus = false;
+                    //AstRaus = false;
                 }
             }
         }
-
-            Asteroiden.clear(); //Asteroiden muss gelöscht werden und neu beschrieben sonst kommt es zu Compilerfehler
-            for (SpaceAsteorid sa : hilfsvector) {
-                Asteroiden.push_back(sa);
+           /* Asteroiden.clear(); //Asteroiden muss gelöscht werden und neu beschrieben sonst kommt es zu Compilerfehler
+            for (int sa = 0; sa < hilfsvector.size();sa++) {
+                Asteroiden.push_back(hilfsvector.at(sa));
             }
             stachel.clear();
-            for (NahKapfstachel st : helpStachel) {
-                stachel.push_back(st);
-            }
-
+            for (int st = 0; st < helpStachel.size();st++) {
+                stachel.push_back(helpStachel.at(st));
+            }*/
         }
     
+    void StachelBewegen() {
+        for (NahKapfstachel& st : stachel) {
+            st.stachelX += stachelspeed;
+        }
+    }
+    void AsteroidenBewegen() {
+        for (SpaceAsteorid& ast : Asteroiden) {
+            ast.AsteroidX = ast.AsteroidX - SpaceSpeed;
+
+            if ((SpaceBeeX <= (ast.AsteroidX + (ast.AsteroidBreite / 2)) && SpaceBeeX >= (ast.AsteroidX - (ast.AsteroidBreite / 2))) &&
+                (SpaceBeeY <= (ast.AsteroidY - (ast.AsteroidLaenge / 2)) && SpaceBeeY >= (ast.AsteroidY + (ast.AsteroidLaenge / 2))))
+            {
+                gestorben = true;
+                break;
+            }
+        }
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void draw() override
     {
@@ -480,11 +497,13 @@ public:
                     , 0.5, 0.5,
                     0.1, 0.1
                 );
-                for (SpaceAsteorid ast : Asteroiden) {
-                    graphics().draw_rect(ast.AsteroidX, ast.AsteroidY, ast.AsteroidLaenge, ast.AsteroidBreite, ast.FarbeAsteroid, ast.AsteroidPos);
+                for (int ast = 0; ast < Asteroiden.size(); ast++) {
+                    if (Asteroiden.at(ast).hit == false) {
+                        graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                    }
                 }
-                for (NahKapfstachel st : stachel) {
-                    graphics().draw_rect(st.stachelX, st.stachelY, st.StachelBreite, st.StachelHoehe, st.FarbeStachel, st.StachelHoehe);
+                for (int st = 0; st < stachel.size();st++) {
+                    graphics().draw_rect(stachel.at(st).stachelX, stachel.at(st).stachelY, stachel.at(st).StachelBreite, stachel.at(st).StachelHoehe, stachel.at(st).FarbeStachel, stachel.at(st).StachelHoehe);
                 }
             }
         }
@@ -793,10 +812,7 @@ public:
             if (!gestorben) {
                 AstAnzahl--;
                 stachelzahl++;
-                
-                
-                
-                
+   
                 if (input().down(Gosu::Button::KB_UP)) {
                     SpaceBeeY -= (SpaceSpeed + 2);
                 }
@@ -806,27 +822,16 @@ public:
                 if (AstAnzahl <= 1) {
                     AstAnzahl = 30;
                     erstelleAsteroid(Asteroiden);
-                    if (Asteroiden.size() != 0) {
-                        AstInRange();
-                    }
+                    AstInRange();    
                 }
-                if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=20) {
+                if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=0) {
                     stachel.push_back(neuerStachel(SpaceBeeX, SpaceBeeY));
                     stachelzahl = 0;
                 }
             }
-            for (SpaceAsteorid& ast : Asteroiden) {
-                ast.AsteroidX = ast.AsteroidX - SpaceSpeed;
-                if ((SpaceBeeX <= (ast.AsteroidX + (ast.AsteroidBreite / 2)) && SpaceBeeX >= (ast.AsteroidX - (ast.AsteroidBreite / 2))) && 
-                    (SpaceBeeY <= (ast.AsteroidY - (ast.AsteroidLaenge / 2)) && SpaceBeeY >= (ast.AsteroidY + (ast.AsteroidLaenge / 2)))) 
-                {
-                    gestorben = true;
-                    break;
-                }
-            }
-            for (NahKapfstachel& st : stachel) {
-                st.stachelX += stachelspeed;
-            }
+            
+            StachelBewegen();
+            AsteroidenBewegen();
 
             if (SpaceBeeY > 600 || SpaceBeeY< 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
                 gestorben = true;
