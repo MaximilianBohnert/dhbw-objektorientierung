@@ -11,7 +11,7 @@ struct bonus {
 };
 
 struct snake_teil {
-public:
+
     double x_pos;
     double y_pos;
     int richtung;
@@ -62,15 +62,17 @@ class GameWindow : public Gosu::Window
     Gosu::Font auswahlmenu = { 30 };
     Gosu::Font auswahl_flappy_biene = {30};
     Gosu::Font auswahl_snake = { 30 };
-    Player spieler;
     Gosu::Image Bildplayer;
     Gosu::Image Hintergrund;
 
-    const double BalkenYBoden = 600;
-    const double BalkenYDecke = 0;
+    int spiel_auswahl = 0;
     double maus_x;
     double maus_y;
 
+    //Flappy Biene   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Player spieler;
+    const double BalkenYBoden = 600;
+    const double BalkenYDecke = 0;
     double score_zaehler;
     double x_player ;
     double y_player;
@@ -94,8 +96,7 @@ class GameWindow : public Gosu::Window
     double TimeDelayDeth;        //Zeitdelay nach Tod
     int rundenzaehler;
     bool gestorben;
-    int spiel_auswahl = 0;
-
+    //Snake   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Gosu::Font anzeige_score_snake = { 30 };
     Gosu::Font anzeige_restart_snake = { 30 };
     Gosu::Font anzeige_start_snake = { 30 };
@@ -113,7 +114,6 @@ class GameWindow : public Gosu::Window
     bool spielstatus = false;
     bool initial_start;
     bool reingefahren_snake;
-
     //Space Spiel /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Gosu::Font anzeige_score_Space = { 30 };
     Gosu::Font anzeige_restart_Space = { 30 };
