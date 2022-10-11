@@ -64,13 +64,14 @@ struct NahKapfstachel
     const Gosu::Color FarbeStachel = Gosu::Color::RED;
     double stachelX;
     double stachelY;
+    bool existent = true;
 };
 NahKapfstachel neuerStachel(double x,double y) {
     NahKapfstachel st;
     st.stachelX = x;
     st.stachelY = y;
     return st;
-    bool existent = true;
+    
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -244,51 +245,26 @@ public:
         bool raus = false;
         bool AstRaus = false;  
         for (int ast = 0; ast < Asteroiden.size(); ast++) {
-            
 
-            if (stachel.size() == 0) {
-                if (Asteroiden.at(ast).AsteroidX <= (0.0 - double(Asteroiden.at(ast).AsteroidBreite / 2))) {
-                    ScoreNichtZerstoert++;
-                }
-                else {
-                    hilfsvector.push_back(Asteroiden.at(ast));
-                }
+            if (Asteroiden.at(ast).AsteroidX <= (0.0 - Asteroiden.at(ast).halbebreite)) {
+                ScoreNichtZerstoert++;
+                Asteroiden.at(ast).hit = true;
             }
-            else {
+            else {      
                 for (int st = 0; st < stachel.size(); st++) {
                     if (stachel.at(st).stachelX >= (Asteroiden.at(ast).AsteroidX - Asteroiden.at(ast).halbebreite) && stachel.at(st).stachelX <= (Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).halbebreite)
                         && stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY - Asteroiden.at(ast).halbehoehe) && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY + Asteroiden.at(ast).halbehoehe)) {
                         SpaceScore++;
-                       // raus = true;
-                       // AstRaus = true;
+                        Asteroiden.at(ast).hit = true;
+                        stachel.at(st).existent = false;
+                    }                      
+                    else if (stachel.at(st).stachelX >= 900.0) {
+                        stachel.at(st).existent = false;
                     }
-                    if (Asteroiden.at(ast).AsteroidX <= (0.0 - double(Asteroiden.at(ast).AsteroidBreite / 2))) {
-                        ScoreNichtZerstoert++;
-                        AstRaus = true;
-                    }
-                    if (stachel.at(st).stachelX >= 900.0) {
-                        raus = true;
-                    }
-                    if (AstRaus == false) {
-                        hilfsvector.push_back(Asteroiden.at(ast));
-                    }
-                    if (raus == false) {
-                        helpStachel.push_back(stachel.at(st));
-                    }
-                    //raus = false;
-                    //AstRaus = false;
                 }
             }
         }
-           /* Asteroiden.clear(); //Asteroiden muss gelöscht werden und neu beschrieben sonst kommt es zu Compilerfehler
-            for (int sa = 0; sa < hilfsvector.size();sa++) {
-                Asteroiden.push_back(hilfsvector.at(sa));
-            }
-            stachel.clear();
-            for (int st = 0; st < helpStachel.size();st++) {
-                stachel.push_back(helpStachel.at(st));
-            }*/
-        }
+    }
     
     void StachelBewegen() {
         for (NahKapfstachel& st : stachel) {
@@ -502,8 +478,10 @@ public:
                         graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                     }
                 }
-                for (int st = 0; st < stachel.size();st++) {
-                    graphics().draw_rect(stachel.at(st).stachelX, stachel.at(st).stachelY, stachel.at(st).StachelBreite, stachel.at(st).StachelHoehe, stachel.at(st).FarbeStachel, stachel.at(st).StachelHoehe);
+                for (int st = 0; st < stachel.size(); st++) {
+                    if (stachel.at(st).existent) {
+                        graphics().draw_rect(stachel.at(st).stachelX, stachel.at(st).stachelY, stachel.at(st).StachelBreite, stachel.at(st).StachelHoehe, stachel.at(st).FarbeStachel, stachel.at(st).StachelHoehe);
+                    }
                 }
             }
         }
@@ -812,7 +790,7 @@ public:
             if (!gestorben) {
                 AstAnzahl--;
                 stachelzahl++;
-   
+                
                 if (input().down(Gosu::Button::KB_UP)) {
                     SpaceBeeY -= (SpaceSpeed + 2);
                 }
@@ -822,12 +800,13 @@ public:
                 if (AstAnzahl <= 1) {
                     AstAnzahl = 30;
                     erstelleAsteroid(Asteroiden);
-                    AstInRange();    
+                       
                 }
-                if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=0) {
+                if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=20) {
                     stachel.push_back(neuerStachel(SpaceBeeX, SpaceBeeY));
                     stachelzahl = 0;
                 }
+                AstInRange(); 
             }
             
             StachelBewegen();
