@@ -52,10 +52,7 @@ struct SpaceAsteorid {
     double AsteroidX;
     double AsteroidY;
     bool hit = false;
-    double Yunten = (AsteroidY + double(AsteroidLaenge) / 2.0);
-    double Yoben = (AsteroidY - double(AsteroidLaenge) / 2.0);
-    double Xvore = AsteroidX + (double(AsteroidBreite) / 2.0);
-    double Xhinten = AsteroidX - (double(AsteroidBreite) / 2.0);
+   
 };
 
 struct NahKapfstachel
@@ -67,10 +64,6 @@ struct NahKapfstachel
     double stachelX;
     double stachelY;
     bool existent = true;
-    double Yunten = stachelY + (double(StachelHoehe) / 2);
-    double Yoben = stachelY - (double(StachelHoehe) / 2);
-    double Xvore = stachelX + (double(StachelBreite) / 2);
-    double Xhinten = stachelX - (double(StachelBreite) / 2);
 };
 NahKapfstachel neuerStachel(double x,double y) {
     NahKapfstachel st;
@@ -242,21 +235,17 @@ public:
             if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
                 Asteroiden.at(ast).hit = true;
-                //Asteroiden.erase(Asteroiden.begin() + ast);
             }
             else {
                 for (int st = 0; st < stachel.size(); st++) {
-                    if ((stachel.at(st).Xvore <= Asteroiden.at(ast).Xvore) && (stachel.at(st).Xvore <= Asteroiden.at(ast).Xhinten)
-                        && (stachel.at(st).Yoben <= Asteroiden.at(ast).Yunten )&& (stachel.at(st).Yunten >= Asteroiden.at(ast).Yoben)) {
+                    if (stachel.at(st).stachelX >= Asteroiden.at(ast).AsteroidX && stachel.at(st).stachelX <= Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).AsteroidBreite
+                        && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY+ Asteroiden.at(ast).AsteroidLaenge + stachel.at(st).StachelHoehe)&& (stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY ))) {
                         SpaceScore++;
                         Asteroiden.at(ast).hit = true;
                         stachel.at(st).existent = false;
-                        //Asteroiden.erase(Asteroiden.begin() + ast);
-                        //stachel.erase(stachel.begin() + st);
                     }                      
                     else if (stachel.at(st).stachelX >= 900.0) {
                         stachel.at(st).existent = false;
-                        //stachel.erase(stachel.begin() + st);
                     }
                     else {
 
@@ -807,10 +796,11 @@ public:
                     stachelzahl = 0;
                 }
                 AstInRange(); 
+                StachelBewegen();
+                AsteroidenBewegen();
             }
             
-            StachelBewegen();
-            AsteroidenBewegen();
+            
 
             if (SpaceBeeY > 600 || SpaceBeeY< 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
                 gestorben = true;
