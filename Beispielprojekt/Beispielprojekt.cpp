@@ -46,7 +46,7 @@ public:
 struct SpaceAsteorid {
     const int AsteroidBreite = 30;
     const int AsteroidLaenge = 30;
-    const int AsteroidPos = 2;
+    const int AsteroidPos = 1;
     const Gosu::Color FarbeAsteroid = Gosu::Color::GRAY;
     double AsteroidX;
     double AsteroidY;
@@ -58,7 +58,7 @@ struct NahKapfstachel
 {
     const int StachelBreite = 5;
     const int StachelHoehe = 3;
-    const int StachelPos = 2;
+    const int StachelPos = 1;
     const Gosu::Color FarbeStachel = Gosu::Color::RED;
     double stachelX;
     double stachelY;
@@ -151,12 +151,13 @@ class GameWindow : public Gosu::Window
     int ScoreNichtZerstoert;
     double stachelspeed = 4;
     int stachelzahl;
+    Gosu::Image SpaceHintergrund;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
 
 public:
 
-    GameWindow() : Window(1000, 600), Bildplayer("biene.png"),Hintergrund("pixelhimmel.png")
+    GameWindow() : Window(1000, 600), Bildplayer("biene.png"),Hintergrund("pixelhimmel.png"),SpaceHintergrund("Space.jpeg")
     {
         set_caption("Flappy Biene");
     }
@@ -227,8 +228,12 @@ public:
         bool raus = false;
         bool AstRaus = false;  
         for (int ast = 0; ast < Asteroiden.size(); ast++) {
-
-            if (Asteroiden.at(ast).AsteroidX <= 0) {
+            if (Asteroiden.at(ast).AsteroidX <= SpaceBeeX + 30 && Asteroiden.at(ast).AsteroidY >= SpaceBeeY - 40 && Asteroiden.at(ast).AsteroidY <= SpaceBeeY + 40) {
+                gestorben = true;
+                Asteroiden.at(ast).hit = true;
+                break;
+            }
+            else if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
                 Asteroiden.at(ast).hit = true;
             }
@@ -481,6 +486,11 @@ public:
         }   
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 3) {
+            SpaceHintergrund.draw(0, 0, 0, 0.8, 0.5);
+            string score = to_string(SpaceScore);
+            string nothit = to_string(ScoreNichtZerstoert);
+            anzeige_score_Space.draw_text_rel("Score: " + score, 0, 0, 2, 0, 0, 1, 1, Gosu::Color::GREEN);
+
             if (SpaceSpielen) {
                 Bildplayer.draw_rot(SpaceBeeX, SpaceBeeY, 2, rotationSpace
                     , 0.5, 0.5,
@@ -496,6 +506,11 @@ public:
                         graphics().draw_rect(stachel.at(st).stachelX, stachel.at(st).stachelY, stachel.at(st).StachelBreite, stachel.at(st).StachelHoehe, stachel.at(st).FarbeStachel, stachel.at(st).StachelHoehe);
                     }
                 }
+            }
+            if (gestorben) {//!SpaceSpielen &&               
+                anzeige_restart_Space.draw_text_rel("Restart", 500, 300, 2, 0.5, 0.5, 2, 2, Gosu::Color::RED);
+                graphics().draw_quad(700, 40, Gosu::Color::BLUE, 700, 100, Gosu::Color::BLUE, 960, 100, Gosu::Color::BLUE, 960, 40, Gosu::Color::BLUE, 1);
+                auswahlmenu.draw_text_rel("Auswahlbildschirm", 830, 70, 2, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
             }
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -843,6 +858,14 @@ public:
                 AstInRange(); 
                 StachelBewegen();
                 AsteroidenBewegen();
+            }
+            else if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && !spielstatus && input().down(Gosu::Button::MS_LEFT) && !initial_start) {		//restart Button gedrückt
+                restart_space();  
+                gestorben = false;
+                return;
+            }
+            else if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT)) {               //Auswahlbildschrim ausgewählt
+                spiel_auswahl = 0;
             }
             
             
