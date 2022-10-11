@@ -249,8 +249,36 @@ public:
                 }
             }
         }
+        loescheObjekte();
     }
-    
+    void loescheObjekte() {
+        vector<SpaceAsteorid> helpAst;
+        for (int ast = 0; ast < Asteroiden.size(); ast++) {
+            if (Asteroiden.at(ast).hit == true) {
+            }
+            else {
+                helpAst.push_back(Asteroiden.at(ast));
+            }
+        }
+        Asteroiden.clear();
+        for (SpaceAsteorid ast : helpAst) {
+            Asteroiden.push_back(ast);
+        }
+
+        vector<NahKapfstachel> helpSt;
+        for (int st = 0; st < stachel.size(); st++) {
+            if (stachel.at(st).existent == false) {
+            }
+            else {
+                helpSt.push_back(stachel.at(st));
+            }
+        }
+        stachel.clear();
+        for (NahKapfstachel st : helpSt) {
+            stachel.push_back(st);
+        }
+    }
+
     void StachelBewegen() {
         for (NahKapfstachel& st : stachel) {
             st.stachelX += stachelspeed;
@@ -805,6 +833,7 @@ public:
                 if (AstAnzahl <= 1) {
                     AstAnzahl = 30;
                     erstelleAsteroid(Asteroiden);
+                    
                        
                 }
                 if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=20) {
