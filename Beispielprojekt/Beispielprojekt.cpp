@@ -10,12 +10,11 @@ struct bonus {
     double y_pos_bonus;
 };
 
-class snake_teil {
+struct snake_teil {
 public:
     double x_pos;
     double y_pos;
     int richtung;
-
     snake_teil(double x, double y, int r) : x_pos(x), y_pos(y), richtung(r) {}
 };
 
@@ -102,20 +101,18 @@ class GameWindow : public Gosu::Window
     Gosu::Font anzeige_start_snake = { 30 };
     vector<bonus> bonus_liste;
     double velocity_snake = 3;
-    bool rechts = true;
-    bool links = false;
-    bool oben = false;
-    bool unten = false;
-    int speed_increase_at = 1;
-    double speed_increase = 1;
-    int anzahl_bonus = 2;
-    int bonus_increase_at = 2;
-    double hitobx_increase = 0;
-    int bonus_increase_abfrage = bonus_increase_at;
+    bool rechts, links, oben, unten;
+    int speed_increase_at;
+    double speed_increase;
+    int anzahl_bonus;
+    int bonus_increase_at;
+    double hitobx_increase;
+    int bonus_increase_abfrage;
     bool pause = true;
     vector<snake_teil> snake;
     bool spielstatus = false;
-    bool initial_start = true;
+    bool initial_start;
+    bool reingefahren_snake;
 
     //Space Spiel /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Gosu::Font anzeige_score_Space = { 30 };
@@ -177,6 +174,7 @@ public:
         velocity_snake = 3;
         bonus_increase_at = 2;
         bonus_increase_abfrage = bonus_increase_at;
+        reingefahren_snake = false;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void restart_space() {
@@ -237,7 +235,7 @@ public:
             auswahl_snake.draw_text_rel("Snake", 750, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
             auswahl_flappy_biene.draw_text_rel("Space", 515, 300, 1, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
         }
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 1) {
             string punkte = to_string(score);
 
@@ -342,7 +340,7 @@ public:
                 anzeige_score_flappy_biene.draw_text_rel("Score: " + punkte, 0, 600, 2, 0, 1, 1, 1, Gosu::Color::BLACK);
             }
         }       
-
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 2) {
 
             string score = to_string(snake.size());
@@ -419,7 +417,6 @@ public:
                 }
             }
         }
-
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -429,7 +426,7 @@ public:
 
         maus_x = input().mouse_x();            //Position Maus
         maus_y = input().mouse_y();
-
+        /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 0) {
             if (maus_x >= 150 && maus_x <= 350 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
                 spiel_auswahl = 1;
@@ -446,7 +443,7 @@ public:
                
             }
         }
-
+        /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 1) {
             if (spieler.get_status()) {
 
@@ -537,7 +534,7 @@ public:
                 }
             }
         }       
-
+        ////////////////////////////////SNAKE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 2) {
 
             if (snake.size() == 0) {
@@ -578,8 +575,7 @@ public:
 
             if (input().down(Gosu::Button::KB_RIGHT) || rechts) {
                 if (links && snake.size() > 1) {
-                    spielstatus = false;
-                    return;
+                    reingefahren_snake = true;
                 }
                 rechts = true; links = false; oben = false; unten = false;
                 snake.at(0).richtung = 1;
@@ -587,8 +583,7 @@ public:
             }
             if (input().down(Gosu::Button::KB_LEFT) || links) {
                 if (rechts && snake.size() > 1) {
-                    spielstatus = false;
-                    return;
+                    reingefahren_snake = true;
                 }
                 rechts = false; links = true; oben = false; unten = false;
                 snake.at(0).richtung = 2;
@@ -597,30 +592,40 @@ public:
             }
             if (input().down(Gosu::Button::KB_UP) || oben) {
                 if (unten && snake.size() > 1) {
-                    spielstatus = false;
-                    return;
+                    reingefahren_snake = true;
                 }
                 rechts = false; links = false; oben = true; unten = false;
                 snake.at(0).richtung = 3;
             }
             if (input().down(Gosu::Button::KB_DOWN) || unten) {
                 if (oben && snake.size() > 1) {
-                    spielstatus = false;
-                    return;
+                    reingefahren_snake = true;
                 }
                 rechts = false; links = false; oben = false; unten = true;
                 snake.at(0).richtung = 4;
 
             }
             if (!pause) {
-                if (rechts)
+                if (rechts) {
                     snake.at(0).x_pos += velocity_snake;
-                if (links)
+                    if (snake.at(0).x_pos > 990)
+                        snake.at(0).x_pos = -10;
+                }
+                if (links) {
                     snake.at(0).x_pos -= velocity_snake;
-                if (oben)
+                    if (snake.at(0).x_pos < 10)
+                        snake.at(0).x_pos = 1010;
+                }
+                if (oben) {
                     snake.at(0).y_pos -= velocity_snake;
-                if (unten)
+                    if (snake.at(0).y_pos < 10)
+                        snake.at(0).y_pos = 610;
+                }
+                if (unten) {
                     snake.at(0).y_pos += velocity_snake;
+                    if (snake.at(0).y_pos > 590)
+                        snake.at(0).y_pos = -10;
+                }
             }
 
             auto it_außen_vorn = snake.begin();
@@ -638,7 +643,13 @@ public:
                             if (it_außen_hinten->y_pos != it_außen_vorn->y_pos) {
                                 it_außen_hinten->y_pos = it_außen_vorn->y_pos;
                             }
-                            if (it_außen_vorn->richtung == 1) {
+                            if (reingefahren_snake) {
+                               if (it_außen_hinten->richtung == 1)
+                                    it_außen_hinten->x_pos += velocity_snake;
+                                if (it_außen_vorn->richtung == 2)
+                                    it_außen_hinten->x_pos -= velocity_snake;
+                            }
+                            if (it_außen_vorn->richtung == 1 && !reingefahren_snake) {
                                 if (it_außen_hinten->x_pos != it_außen_vorn->x_pos - 25) {
                                     it_außen_hinten->x_pos = it_außen_vorn->x_pos - 25;
                                 }
@@ -646,7 +657,7 @@ public:
                                     it_außen_hinten->x_pos += velocity_snake;
                                 it_außen_hinten->richtung = 1;
                             }
-                            if (it_außen_vorn->richtung == 2) {
+                            if (it_außen_vorn->richtung == 2 && !reingefahren_snake) {
                                 if (it_außen_hinten->x_pos != it_außen_vorn->x_pos + 25) {
                                     it_außen_hinten->x_pos = it_außen_vorn->x_pos + 25;
                                 }
@@ -666,7 +677,13 @@ public:
                             if (it_außen_hinten->x_pos != it_außen_vorn->x_pos) {
                                 it_außen_hinten->x_pos = it_außen_vorn->x_pos;
                             }
-                            if (it_außen_vorn->richtung == 3) {
+                            if (reingefahren_snake) {
+                                if (it_außen_hinten->richtung == 3)
+                                    it_außen_hinten->y_pos -= velocity_snake;
+                                if (it_außen_vorn->richtung == 4)
+                                    it_außen_hinten->y_pos += velocity_snake;
+                            }
+                            if (it_außen_vorn->richtung == 3 && !reingefahren_snake) {
                                 if (it_außen_hinten->y_pos != it_außen_vorn->y_pos + 25) {
                                     it_außen_hinten->y_pos = it_außen_vorn->y_pos + 25;
                                 }
@@ -674,7 +691,7 @@ public:
                                     it_außen_hinten->y_pos -= velocity_snake;
                                 it_außen_hinten->richtung = 3;
                             }
-                            if (it_außen_vorn->richtung == 4) {
+                            if (it_außen_vorn->richtung == 4 && !reingefahren_snake) {
                                 if (it_außen_hinten->y_pos != it_außen_vorn->y_pos - 25) {
                                     it_außen_hinten->y_pos = it_außen_vorn->y_pos - 25;
                                 }
@@ -693,12 +710,6 @@ public:
 
                     it_außen_vorn++;
                 }
-            }
-
-            if (snake.at(0).x_pos + 10 > 1000 || snake.at(0).x_pos - 10 < 0 || snake.at(0).y_pos + 10 > 600 || snake.at(0).y_pos - 10 < 0) {
-                spielstatus = false;
-                pause = true;
-                return;
             }
 
             if (snake.size() == bonus_increase_abfrage && anzahl_bonus < 5) {
