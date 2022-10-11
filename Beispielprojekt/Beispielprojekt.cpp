@@ -52,8 +52,10 @@ struct SpaceAsteorid {
     double AsteroidX;
     double AsteroidY;
     bool hit = false;
-    double halbebreite = 15;
-    double halbehoehe = 15;
+    double Yunten = (AsteroidY + double(AsteroidLaenge) / 2.0);
+    double Yoben = (AsteroidY - double(AsteroidLaenge) / 2.0);
+    double Xvore = AsteroidX + (double(AsteroidBreite) / 2.0);
+    double Xhinten = AsteroidX - (double(AsteroidBreite) / 2.0);
 };
 
 struct NahKapfstachel
@@ -65,6 +67,10 @@ struct NahKapfstachel
     double stachelX;
     double stachelY;
     bool existent = true;
+    double Yunten = stachelY + (double(StachelHoehe) / 2);
+    double Yoben = stachelY - (double(StachelHoehe) / 2);
+    double Xvore = stachelX + (double(StachelBreite) / 2);
+    double Xhinten = stachelX - (double(StachelBreite) / 2);
 };
 NahKapfstachel neuerStachel(double x,double y) {
     NahKapfstachel st;
@@ -219,47 +225,41 @@ public:
         stachelzahl = 0;
 
     }
-    /*void AstAnStelleLoeschen(int stelle, vector<SpaceAsteorid>& ast) {
-        vector<SpaceAsteorid> hilfsvector;
-        for (int laenge = 0; laenge < ast.size(); laenge++) {
-            if (laenge != stelle) {
-                hilfsvector.push_back(ast.at(laenge));
-            }
-        }
-        ast = hilfsvector;
-
-    }
-    */
-
     void erstelleAsteroid(vector<SpaceAsteorid>& AstVect) {
         double y = Gosu::random(0, 800);
         SpaceAsteorid ast;
         ast.AsteroidX = 1000;
         ast.AsteroidY = y;
         AstVect.push_back(ast);
-    }
-    
-    void AstInRange() {                 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!     diese Funktion ist fürs abstürzen verantworlich
+    }  
+    void AstInRange() {                 
         vector<SpaceAsteorid> hilfsvector;
         vector<NahKapfstachel> helpStachel;
         bool raus = false;
         bool AstRaus = false;  
         for (int ast = 0; ast < Asteroiden.size(); ast++) {
 
-            if (Asteroiden.at(ast).AsteroidX <= (0.0 - Asteroiden.at(ast).halbebreite)) {
+            if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
                 Asteroiden.at(ast).hit = true;
+                //Asteroiden.erase(Asteroiden.begin() + ast);
             }
-            else {      
+            else {
                 for (int st = 0; st < stachel.size(); st++) {
-                    if (stachel.at(st).stachelX >= (Asteroiden.at(ast).AsteroidX - Asteroiden.at(ast).halbebreite) && stachel.at(st).stachelX <= (Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).halbebreite)
-                        && stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY - Asteroiden.at(ast).halbehoehe) && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY + Asteroiden.at(ast).halbehoehe)) {
+                    if ((stachel.at(st).Xvore <= Asteroiden.at(ast).Xvore) && (stachel.at(st).Xvore <= Asteroiden.at(ast).Xhinten)
+                        && (stachel.at(st).Yoben <= Asteroiden.at(ast).Yunten )&& (stachel.at(st).Yunten >= Asteroiden.at(ast).Yoben)) {
                         SpaceScore++;
                         Asteroiden.at(ast).hit = true;
                         stachel.at(st).existent = false;
+                        //Asteroiden.erase(Asteroiden.begin() + ast);
+                        //stachel.erase(stachel.begin() + st);
                     }                      
                     else if (stachel.at(st).stachelX >= 900.0) {
                         stachel.at(st).existent = false;
+                        //stachel.erase(stachel.begin() + st);
+                    }
+                    else {
+
                     }
                 }
             }
