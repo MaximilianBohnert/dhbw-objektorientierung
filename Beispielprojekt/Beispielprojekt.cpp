@@ -177,8 +177,6 @@ public:
         velocity_snake = 3;
         bonus_increase_at = 2;
         bonus_increase_abfrage = bonus_increase_at;
-        spielstatus = true;
-        pause = false;
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void restart_space() {
@@ -225,7 +223,7 @@ public:
             Asteroiden.push_back(sa);
         }
     }
-  
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void draw() override
     {
@@ -438,7 +436,8 @@ public:
             }
             else if (maus_x >= 670 && maus_x <= 830 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
                 spiel_auswahl = 2;
-               // spielstatus = false;
+                initial_start = true;
+                restart_snake();
             }
             else if (maus_x >= 430 && maus_x <= 600 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
                 spiel_auswahl = 3;
@@ -551,18 +550,22 @@ public:
                 hitobx_increase += 1;
             }
 
-            if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT)) {
+            if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT)) {               //Auswahlbildschrim ausgewählt
                 spiel_auswahl = 0;
             }
 
             if (maus_x >= 450 && maus_x <= 550 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT) && initial_start) {		//start Button gedrückt
                 initial_start = false;
                 restart_snake();
+                spielstatus = true;
+                pause = false;
                 return;
             }
 
-            if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && !spielstatus && input().down(Gosu::Button::MS_LEFT) && !initial_start) {		//reset Button gedrückt
+            if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && !spielstatus && input().down(Gosu::Button::MS_LEFT) && !initial_start) {		//restart Button gedrückt
                 restart_snake();
+                pause = false;
+                spielstatus = true;
                 return;
             }
 
@@ -684,6 +687,7 @@ public:
                     }
                     if ((snake.at(0).x_pos < it_außen_hinten->x_pos + 10 && snake.at(0).x_pos > it_außen_hinten->x_pos - 10) && (snake.at(0).y_pos < it_außen_hinten->y_pos + 10 && snake.at(0).y_pos > it_außen_hinten->y_pos - 10)) {
                         spielstatus = false;
+                        pause = true;
                         return;
                     }
 
@@ -693,6 +697,7 @@ public:
 
             if (snake.at(0).x_pos + 10 > 1000 || snake.at(0).x_pos - 10 < 0 || snake.at(0).y_pos + 10 > 600 || snake.at(0).y_pos - 10 < 0) {
                 spielstatus = false;
+                pause = true;
                 return;
             }
 
