@@ -85,6 +85,7 @@ class GameWindow : public Gosu::Window
     Gosu::Font auswahl_snake = { 30 };
     Gosu::Image Bildplayer;
     Gosu::Image Hintergrund;
+    Gosu::Font ansage_flappybiene = { 30 };
 
     int spiel_auswahl = 0;
     double maus_x;
@@ -121,6 +122,7 @@ class GameWindow : public Gosu::Window
     double x_funktion_flappybiene;
     double y_funktion_flappybiene;
     bool start_ruhe_flappy_biene;
+    bool initial_down_spacebar_flappybiene;
     //Snake   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Gosu::Font anzeige_score_snake = { 30 };
     Gosu::Font anzeige_restart_snake = { 30 };
@@ -198,6 +200,7 @@ public:
         y_funktion_flappybiene = y_player;
         x_funktion_flappybiene = 0;
         start_ruhe_flappy_biene = true;
+        initial_down_spacebar_flappybiene = false;
     }
 
     void restart_snake() {
@@ -333,6 +336,10 @@ public:
             string punkte = to_string(score);
 
             if (spieler.get_status()) {
+
+                if (!initial_down_spacebar_flappybiene)
+                    ansage_flappybiene.draw_text_rel("Press Space Bar to start", 500, 300, 2, 0.5, 0.5, 1, 1, Gosu::Color::RED);
+
                 Bildplayer.draw_rot(x_player, y_player, 2, rot
                     , 0.5, 0.5,
                     0.1, 0.1
@@ -556,52 +563,81 @@ public:
         if (spiel_auswahl == 1) {
             if (spieler.get_status()) {
 
-                //if (!gestorben) {
-                //    if (input().down(Gosu::Button::KB_RIGHT)) {               //Steuerung der Biene mit Pfeiltasten
-                //        x_player += velocity_flappy_biene + 2;
-                //    }
-                //    if (input().down(Gosu::Button::KB_LEFT)) {
-                //        x_player -= velocity_flappy_biene + 2;
-                //        rot = 270;
-                //    }
-                //    if (input().down(Gosu::Button::KB_UP)) {
-                //        y_player -= velocity_flappy_biene + 2;
-                //        rot = 45;
-                //    }
-                //    if (input().down(Gosu::Button::KB_DOWN)) {
-                //        y_player += velocity_flappy_biene + 2;
-                //        rot = 135;
-                //    }
-                //    if (!(input().down(Gosu::Button::KB_DOWN)) && !(input().down(Gosu::Button::KB_UP)) && !(input().down(Gosu::Button::KB_LEFT)))      //Rotation der Biene im Normalfall bei 90
-                //        rot = 90;
-                //}
 
-                if(input().down(Gosu::Button::KB_SPACE) || score_zaehler > 0.5)             //neue Steuerung über Leertaste
-                    start_ruhe_flappy_biene = false;
-
-                if (!gestorben && !start_ruhe_flappy_biene) {
+                ////////////////////////////////////////////////   steuerung wie standart Flappy Bird Spiel    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+                if (!gestorben) {                               
                     if (input().down(Gosu::Button::KB_SPACE) && !spacebar_down) {
                         spacebar_down = true;
                         x_funktion_flappybiene = 0;
-                        y_funktion_flappybiene = y_player;
+                        initial_down_spacebar_flappybiene = true;
                     }
                     if (!input().down(Gosu::Button::KB_SPACE) && spacebar_down) {
                         spacebar_down = false;
-                        x_funktion_flappybiene = 0;
-                        y_funktion_flappybiene = y_player;
                     }
 
+                    if (initial_down_spacebar_flappybiene) {
+                        if (x_funktion_flappybiene < 2) {
+                            y_player -= 6;
+                            y_funktion_flappybiene = y_player;
+                            rot = 45;
+                        }
+                        else if (x_funktion_flappybiene >= 3) {
+                            y_player = y_funktion_flappybiene + 5 * (pow((x_funktion_flappybiene - 3), 2));
+                            rot = 135;
+                        }
+                        else
+                            rot = 90;
 
-                    if (spacebar_down) {
-                        y_player = y_funktion_flappybiene - 20 * x_funktion_flappybiene;
-                        rot = 45;
+                        x_funktion_flappybiene += 0.2;
                     }
-                    else {
-                        y_player = y_funktion_flappybiene + 20 * x_funktion_flappybiene;
-                        rot = 135;
-                    }
-                    x_funktion_flappybiene += 0.3;
+
+                    //////////////////////////////////////////////////  Steuerung der Biene mit Pfeiltasten ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    //    if (input().down(Gosu::Button::KB_RIGHT)) {               
+                    //        x_player += velocity_flappy_biene + 2;
+                    //    }
+                    //    if (input().down(Gosu::Button::KB_LEFT)) {
+                    //        x_player -= velocity_flappy_biene + 2;
+                    //        rot = 270;
+                    //    }
+                    //    if (input().down(Gosu::Button::KB_UP)) {
+                    //        y_player -= velocity_flappy_biene + 2;
+                    //        rot = 45;
+                    //    }
+                    //    if (input().down(Gosu::Button::KB_DOWN)) {
+                    //        y_player += velocity_flappy_biene + 2;
+                    //        rot = 135;
+                    //    }
+                    //    if (!(input().down(Gosu::Button::KB_DOWN)) && !(input().down(Gosu::Button::KB_UP)) && !(input().down(Gosu::Button::KB_LEFT)))      
+                    //        rot = 90;
+                    
+                    /////////////////////////////////// Steuerung nach schräg oben/unten mit Leertaste   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    //if(input().down(Gosu::Button::KB_SPACE) || score_zaehler > 0.5)             
+                    //    start_ruhe_flappy_biene = false;
+                    //if (!start_ruhe_flappy_biene) {
+                    //    if (input().down(Gosu::Button::KB_SPACE) && !spacebar_down) {
+                    //        spacebar_down = true;
+                    //        x_funktion_flappybiene = 0;
+                    //        y_funktion_flappybiene = y_player;
+                    //    }
+                    //    if (!input().down(Gosu::Button::KB_SPACE) && spacebar_down) {
+                    //        spacebar_down = false;
+                    //        x_funktion_flappybiene = 0;
+                    //        y_funktion_flappybiene = y_player;
+                    //    }
+                    //    if (spacebar_down) {
+                    //        y_player = y_funktion_flappybiene - 20 * x_funktion_flappybiene;
+                    //        rot = 45;
+                    //    }
+                    //    else {
+                    //        y_player = y_funktion_flappybiene + 20 * x_funktion_flappybiene;
+                    //        rot = 135;
+                    //    }
+                    //    x_funktion_flappybiene += 0.3;
+                    //}
                 }
+
 
                 x1 -= velocity_flappy_biene;           //bewegung der Balken
                 x2 -= velocity_flappy_biene;
