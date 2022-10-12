@@ -2,6 +2,7 @@
 #include <Gosu/AutoLink.hpp>
 #include <iostream>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 
@@ -116,6 +117,10 @@ class GameWindow : public Gosu::Window
     double TimeDelayDeth;        //Zeitdelay nach Tod
     int rundenzaehler;
     bool gestorben;
+    bool spacebar_down;
+    double x_funktion_flappybiene;
+    double y_funktion_flappybiene;
+    bool start_ruhe_flappy_biene;
     //Snake   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Gosu::Font anzeige_score_snake = { 30 };
     Gosu::Font anzeige_restart_snake = { 30 };
@@ -171,24 +176,28 @@ public:
         y_player = 300;
         velocity_flappy_biene = 3;
         rot = 90;
-        x_verschiebung = 400;
+        x_verschiebung = 700;
         x1 = 500;
         x2 = 600;
         x3 = x1 + x_verschiebung;
         x4 = x2 + x_verschiebung;
         x5 = x3 + x_verschiebung;
         x6 = x4 + x_verschiebung;
-        BalkenYMitteUnten = 300;
-        BalkenYMitteOben = 200;
+        BalkenYMitteUnten = 365;
+        BalkenYMitteOben = 235;
         y_verschiebung = 0;
         y_verschiebung2 = 200;
-        y_verschiebung3 = -100;
+        y_verschiebung3 = -200;
         speed_increase_at_score = 1;
         score_increase = 0.016;
         score = 0;
         TimeDelayDeth = 0;        //Zeitdelay nach Tod
         rundenzaehler = 0;
         gestorben = false;
+        spacebar_down = false;
+        y_funktion_flappybiene = y_player;
+        x_funktion_flappybiene = 0;
+        start_ruhe_flappy_biene = true;
     }
 
     void restart_snake() {
@@ -288,7 +297,6 @@ public:
             stachel.push_back(st);
         }
     }
-
     void StachelBewegen() {
         for (NahKapfstachel& st : stachel) {
             st.stachelX += stachelspeed;
@@ -388,7 +396,7 @@ public:
                 if (gestorben) {          //Anzeige Menü Bildschirm
 
                     velocity_flappy_biene = 0;
-                    if (y_player < 590) {  //
+                    if (y_player < 590) {  
                         y_player += 5; //Player fällt runter
                         rot = 180;
                     }
@@ -548,24 +556,51 @@ public:
         if (spiel_auswahl == 1) {
             if (spieler.get_status()) {
 
-                if (!gestorben) {
-                    if (input().down(Gosu::Button::KB_RIGHT)) {               //Steuerung der Biene mit Pfeiltasten
-                        x_player += velocity_flappy_biene + 2;
+                //if (!gestorben) {
+                //    if (input().down(Gosu::Button::KB_RIGHT)) {               //Steuerung der Biene mit Pfeiltasten
+                //        x_player += velocity_flappy_biene + 2;
+                //    }
+                //    if (input().down(Gosu::Button::KB_LEFT)) {
+                //        x_player -= velocity_flappy_biene + 2;
+                //        rot = 270;
+                //    }
+                //    if (input().down(Gosu::Button::KB_UP)) {
+                //        y_player -= velocity_flappy_biene + 2;
+                //        rot = 45;
+                //    }
+                //    if (input().down(Gosu::Button::KB_DOWN)) {
+                //        y_player += velocity_flappy_biene + 2;
+                //        rot = 135;
+                //    }
+                //    if (!(input().down(Gosu::Button::KB_DOWN)) && !(input().down(Gosu::Button::KB_UP)) && !(input().down(Gosu::Button::KB_LEFT)))      //Rotation der Biene im Normalfall bei 90
+                //        rot = 90;
+                //}
+
+                if(input().down(Gosu::Button::KB_SPACE) || score_zaehler > 0.5)             //neue Steuerung über Leertaste
+                    start_ruhe_flappy_biene = false;
+
+                if (!gestorben && !start_ruhe_flappy_biene) {
+                    if (input().down(Gosu::Button::KB_SPACE) && !spacebar_down) {
+                        spacebar_down = true;
+                        x_funktion_flappybiene = 0;
+                        y_funktion_flappybiene = y_player;
                     }
-                    if (input().down(Gosu::Button::KB_LEFT)) {
-                        x_player -= velocity_flappy_biene + 2;
-                        rot = 270;
+                    if (!input().down(Gosu::Button::KB_SPACE) && spacebar_down) {
+                        spacebar_down = false;
+                        x_funktion_flappybiene = 0;
+                        y_funktion_flappybiene = y_player;
                     }
-                    if (input().down(Gosu::Button::KB_UP)) {
-                        y_player -= velocity_flappy_biene + 2;
+
+
+                    if (spacebar_down) {
+                        y_player = y_funktion_flappybiene - 20 * x_funktion_flappybiene;
                         rot = 45;
                     }
-                    if (input().down(Gosu::Button::KB_DOWN)) {
-                        y_player += velocity_flappy_biene + 2;
+                    else {
+                        y_player = y_funktion_flappybiene + 20 * x_funktion_flappybiene;
                         rot = 135;
                     }
-                    if (!(input().down(Gosu::Button::KB_DOWN)) && !(input().down(Gosu::Button::KB_UP)) && !(input().down(Gosu::Button::KB_LEFT)))      //Rotation der Biene im Normalfall bei 90
-                        rot = 90;
+                    x_funktion_flappybiene += 0.3;
                 }
 
                 x1 -= velocity_flappy_biene;           //bewegung der Balken
@@ -578,19 +613,19 @@ public:
                 if (x2 < 0) {             //neu spawnen der Balken mit random Werten für Loch, das Biene durchqueren muss
                     x1 = x5 + x_verschiebung;
                     x2 = x6 + x_verschiebung;
-                    y_verschiebung = Gosu::random(-200, 300);
+                    y_verschiebung = Gosu::random(-BalkenYMitteOben, 600 - BalkenYMitteUnten);
                 }
 
                 if (x4 < 0) {
                     x3 = x1 + x_verschiebung;
                     x4 = x2 + x_verschiebung;
-                    y_verschiebung2 = Gosu::random(-200, 300);
+                    y_verschiebung2 = Gosu::random(-BalkenYMitteOben, 600 - BalkenYMitteUnten);
                 }
 
                 if (x6 < 0) {
                     x5 = x3 + x_verschiebung;
                     x6 = x4 + x_verschiebung;
-                    y_verschiebung3 = Gosu::random(-200, 300);
+                    y_verschiebung3 = Gosu::random(-BalkenYMitteOben, 600 - BalkenYMitteUnten);
                 }
                 if (!gestorben) {
                     score_zaehler += score_increase;             //Scorezähler->Score ist int, score_zaehler ist double und wird immer um score_increade (= 1/60) erhöht->wenn score_zaehler 1 ist, dann wird score um 1 erhöht
@@ -648,7 +683,7 @@ public:
                 hitobx_increase += 1;
             }
 
-            if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT)) {               //Auswahlbildschrim ausgewählt
+            if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT) && !spielstatus ) {               //Auswahlbildschrim ausgewählt
                 spiel_auswahl = 0;
             }
 
