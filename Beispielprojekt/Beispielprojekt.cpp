@@ -16,6 +16,10 @@ struct snake_teil {
     double x_pos;
     double y_pos;
     int richtung;
+    bool rechts_out_of_screen = false;
+    bool links_out_of_screen = false;
+    bool oben_out_of_screen = false;
+    bool unten_out_of_screen = false;
     snake_teil(double x, double y, int r) : x_pos(x), y_pos(y), richtung(r) {}
 };
 
@@ -455,7 +459,7 @@ public:
                 auswahlmenu.draw_text_rel("Auswahlbildschirm", 830, 70, 2, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
             }
 
-            if (!spielstatus && !initial_start) {
+            if ((!spielstatus && !initial_start) || (pause && spielstatus)) {
                 pause = true;
                 anzeige_restart_snake.draw_text_rel("Restart", 500, 300, 2, 0.5, 0.5, 2, 2, Gosu::Color::RED);
             }
@@ -476,6 +480,7 @@ public:
                     950, 35, Gosu::Color::WHITE, 1);
 
             }
+          
             for (auto it = bonus_liste.begin(); it != bonus_liste.end(); it++) {
                 graphics().draw_quad(it->x_pos_bonus - 5, it->y_pos_bonus - 5, Gosu::Color::GREEN,
                     it->x_pos_bonus + 5, it->y_pos_bonus - 5, Gosu::Color::GREEN,
@@ -534,7 +539,10 @@ public:
             }
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+ 
+           
+        
+ }
 
     // Wird 60x pro Sekunde aufgerufen
     void update() override
@@ -542,6 +550,10 @@ public:
 
         maus_x = input().mouse_x();            //Position Maus
         maus_y = input().mouse_y();
+  
+        
+        
+
         /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 0) {
             if (maus_x >= 150 && maus_x <= 350 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT)) {
@@ -639,12 +651,13 @@ public:
                 }
 
 
-                x1 -= velocity_flappy_biene;           //bewegung der Balken
-                x2 -= velocity_flappy_biene;
-                x3 -= velocity_flappy_biene;
-                x4 -= velocity_flappy_biene;
-                x5 -= velocity_flappy_biene;
-                x6 -= velocity_flappy_biene;
+                    x1 -= velocity_flappy_biene;           //bewegung der Balken
+                    x2 -= velocity_flappy_biene;
+                    x3 -= velocity_flappy_biene;
+                    x4 -= velocity_flappy_biene;
+                    x5 -= velocity_flappy_biene;
+                    x6 -= velocity_flappy_biene;
+                
 
                 if (x2 < 0) {             //neu spawnen der Balken mit random Werten für Loch, das Biene durchqueren muss
                     x1 = x5 + x_verschiebung;
@@ -731,77 +744,132 @@ public:
                 return;
             }
 
-            if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && !spielstatus && input().down(Gosu::Button::MS_LEFT) && !initial_start) {		//restart Button gedrückt
+            if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT) && ((!initial_start && !spielstatus) || (pause|| spielstatus) )) {		//restart Button gedrückt
                 restart_snake();
                 pause = false;
                 spielstatus = true;
                 return;
             }
 
-            if ((maus_x >= 955 && maus_x <= 980 && maus_y >= 20 && maus_y <= 50 && input().down(Gosu::Button::MS_LEFT)) || input().down(Gosu::Button::KB_P)) {
+            if ((maus_x >= 955 && maus_x <= 980 && maus_y >= 20 && maus_y <= 50 && input().down(Gosu::Button::MS_LEFT)) || input().down(Gosu::Button::KB_P) && spielstatus) {
                 pause = true;
             }
-            if ((maus_x >= 925 && maus_x <= 950 && maus_y >= 20 && maus_y <= 50 && input().down(Gosu::Button::MS_LEFT) && pause && spielstatus) || input().down(Gosu::Button::KB_C))
+            if (((maus_x >= 925 && maus_x <= 950 && maus_y >= 20 && maus_y <= 50 && input().down(Gosu::Button::MS_LEFT)) || (input().down(Gosu::Button::KB_C))) && pause && spielstatus)
                 pause = false;
 
 
             if (input().down(Gosu::Button::KB_RIGHT) || rechts) {
-                if (links && snake.size() > 1) {
-                    reingefahren_snake = true;
-                }
-                rechts = true; links = false; oben = false; unten = false;
-                snake.at(0).richtung = 1;
+                    if (snake.size() > 1) {
+                        if (!snake.at(1).oben_out_of_screen && !snake.at(1).unten_out_of_screen && !links) {
 
+                            rechts = true; links = false; oben = false; unten = false;
+                            snake.at(0).richtung = 1;
+                            
+                        }
+                    }
+                    else {
+                        rechts = true; links = false; oben = false; unten = false;
+                        snake.at(0).richtung = 1;
+                    }
+                    
+                
             }
             if (input().down(Gosu::Button::KB_LEFT) || links) {
-                if (rechts && snake.size() > 1) {
-                    reingefahren_snake = true;
-                }
-                rechts = false; links = true; oben = false; unten = false;
-                snake.at(0).richtung = 2;
-
+                    if (snake.size() > 1) {
+                        if (!snake.at(1).oben_out_of_screen && !snake.at(1).unten_out_of_screen && !rechts) {                           
+                            rechts = false; links = true; oben = false; unten = false;
+                            snake.at(0).richtung = 2;
+                        }                        
+                    }
+                    else {
+                        rechts = false; links = true; oben = false; unten = false;
+                        snake.at(0).richtung = 2;
+                    }
+                
 
             }
-            if (input().down(Gosu::Button::KB_UP) || oben) {
-                if (unten && snake.size() > 1) {
-                    reingefahren_snake = true;
-                }
-                rechts = false; links = false; oben = true; unten = false;
-                snake.at(0).richtung = 3;
+            if (input().down(Gosu::Button::KB_UP) || oben) {              
+                    if (snake.size() > 1) {
+                        if (!snake.at(1).rechts_out_of_screen && !snake.at(1).links_out_of_screen && !unten) {
+                            rechts = false; links = false; oben = true; unten = false;
+                            snake.at(0).richtung = 3;
+                        }
+                    }
+                    else {
+                        rechts = false; links = false; oben = true; unten = false;
+                        snake.at(0).richtung = 3;
+                    }
+                
             }
             if (input().down(Gosu::Button::KB_DOWN) || unten) {
-                if (oben && snake.size() > 1) {
-                    reingefahren_snake = true;
+                if (snake.size() > 1) {
+                    if (!snake.at(1).rechts_out_of_screen && !snake.at(1).links_out_of_screen && !oben) {
+                        rechts = false; links = false; oben = false; unten = true;      
+                        snake.at(0).richtung = 4;
+                    }
                 }
-                rechts = false; links = false; oben = false; unten = true;
-                snake.at(0).richtung = 4;
-
+                else {
+                    rechts = false; links = false; oben = false; unten = true;
+                    snake.at(0).richtung = 4;
+                }
+                
             }
+
+                snake.at(0).rechts_out_of_screen = false;
+
+                snake.at(0).links_out_of_screen = false;
+
+                snake.at(0).oben_out_of_screen = false;
+
+                snake.at(0).unten_out_of_screen = false;
+
+
+
             if (!pause) {
-                if (rechts) {
+                if (rechts){
+                    
                     snake.at(0).x_pos += velocity_snake;
-                    if (snake.at(0).x_pos > 990)
+
+                    if (snake.at(0).x_pos > 990) {
                         snake.at(0).x_pos = -10;
+                        if (snake.size() > 1)
+                            snake.at(0).rechts_out_of_screen = true;
+                    }
+                        
+                    
                 }
                 if (links) {
                     snake.at(0).x_pos -= velocity_snake;
-                    if (snake.at(0).x_pos < 10)
+                    
+                    if (snake.at(0).x_pos < 10) {
                         snake.at(0).x_pos = 1010;
+                        if (snake.size() > 1)
+                            snake.at(0).links_out_of_screen = true;
+                    }
                 }
                 if (oben) {
                     snake.at(0).y_pos -= velocity_snake;
-                    if (snake.at(0).y_pos < 10)
+                    
+                    if (snake.at(0).y_pos < 10) {
                         snake.at(0).y_pos = 610;
+                        if (snake.size() > 1)
+                            snake.at(0).oben_out_of_screen = true;
+                    }
                 }
                 if (unten) {
                     snake.at(0).y_pos += velocity_snake;
-                    if (snake.at(0).y_pos > 590)
+                    if (snake.at(0).y_pos > 590) {
                         snake.at(0).y_pos = -10;
+                        if (snake.size() > 1)
+                            snake.at(0).unten_out_of_screen = true;
+                    }
                 }
             }
 
             auto it_außen_vorn = snake.begin();
             auto it_außen_hinten = snake.begin();
+            auto it_ende = snake.end();
+            it_ende--;
             it_außen_hinten++;
             if (!pause) {
                 for (it_außen_hinten; it_außen_hinten != snake.end(); it_außen_hinten++) {
@@ -822,19 +890,30 @@ public:
                                     it_außen_hinten->x_pos -= velocity_snake;
                             }
                             if (it_außen_vorn->richtung == 1 && !reingefahren_snake) {
-                                if (it_außen_hinten->x_pos != it_außen_vorn->x_pos - 25) {
-                                    it_außen_hinten->x_pos = it_außen_vorn->x_pos - 25;
-                                }
-                                else if (it_außen_hinten->x_pos < it_außen_vorn->x_pos)
+                                if ((it_außen_vorn->rechts_out_of_screen || it_außen_hinten->rechts_out_of_screen) && it_außen_hinten->x_pos <=990) {
                                     it_außen_hinten->x_pos += velocity_snake;
+                                    it_außen_hinten->rechts_out_of_screen = true;
+                                }
+                                else if (it_außen_hinten->x_pos != it_außen_vorn->x_pos - 25) {
+                                    it_außen_hinten->x_pos = it_außen_vorn->x_pos - 25;
+                                    it_außen_vorn->rechts_out_of_screen = false;
+                                    if (it_außen_hinten == it_ende)
+                                        it_außen_hinten->rechts_out_of_screen = false;
+
+                                }
                                 it_außen_hinten->richtung = 1;
                             }
                             if (it_außen_vorn->richtung == 2 && !reingefahren_snake) {
-                                if (it_außen_hinten->x_pos != it_außen_vorn->x_pos + 25) {
-                                    it_außen_hinten->x_pos = it_außen_vorn->x_pos + 25;
-                                }
-                                else if (it_außen_hinten->x_pos > it_außen_vorn->x_pos)
+                                if ((it_außen_vorn->links_out_of_screen || it_außen_hinten->links_out_of_screen) && it_außen_hinten->x_pos >= 10) {
                                     it_außen_hinten->x_pos -= velocity_snake;
+                                    it_außen_hinten->links_out_of_screen = true;
+                                }
+                                else if (it_außen_hinten->x_pos != it_außen_vorn->x_pos + 25) {
+                                    it_außen_hinten->x_pos = it_außen_vorn->x_pos + 25;
+                                    it_außen_vorn->links_out_of_screen = false;
+                                    if (it_außen_hinten == it_ende)
+                                        it_außen_hinten->links_out_of_screen = false;
+                                }
                                 it_außen_hinten->richtung = 2;
                             }
                         }
@@ -856,19 +935,29 @@ public:
                                     it_außen_hinten->y_pos += velocity_snake;
                             }
                             if (it_außen_vorn->richtung == 3 && !reingefahren_snake) {
-                                if (it_außen_hinten->y_pos != it_außen_vorn->y_pos + 25) {
-                                    it_außen_hinten->y_pos = it_außen_vorn->y_pos + 25;
-                                }
-                                else if (it_außen_hinten->y_pos > it_außen_vorn->y_pos)
+                                if ((it_außen_vorn->oben_out_of_screen || it_außen_hinten->oben_out_of_screen) && it_außen_hinten->y_pos >= 10) {
                                     it_außen_hinten->y_pos -= velocity_snake;
+                                    it_außen_hinten->oben_out_of_screen = true;
+                                }
+                                else if (it_außen_hinten->y_pos != it_außen_vorn->y_pos + 25) {
+                                    it_außen_hinten->y_pos = it_außen_vorn->y_pos + 25;
+                                    it_außen_vorn->oben_out_of_screen = false;
+                                    if (it_außen_hinten == it_ende)
+                                        it_außen_hinten->oben_out_of_screen = false;
+                                }
                                 it_außen_hinten->richtung = 3;
                             }
                             if (it_außen_vorn->richtung == 4 && !reingefahren_snake) {
-                                if (it_außen_hinten->y_pos != it_außen_vorn->y_pos - 25) {
-                                    it_außen_hinten->y_pos = it_außen_vorn->y_pos - 25;
-                                }
-                                else if (it_außen_hinten->y_pos < it_außen_vorn->y_pos)
+                                if ((it_außen_vorn->unten_out_of_screen || it_außen_hinten->unten_out_of_screen) && it_außen_hinten->y_pos <= 590) {
                                     it_außen_hinten->y_pos += velocity_snake;
+                                    it_außen_hinten->unten_out_of_screen = true;
+                                }
+                                else if (it_außen_hinten->y_pos != it_außen_vorn->y_pos - 25) {
+                                    it_außen_hinten->y_pos = it_außen_vorn->y_pos - 25;
+                                    it_außen_vorn->unten_out_of_screen = false;
+                                    if (it_außen_hinten == it_ende)
+                                        it_außen_hinten->unten_out_of_screen = false;
+                                }
                                 it_außen_hinten->richtung = 4;
                             }
                         }
