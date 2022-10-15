@@ -100,10 +100,10 @@ class GameWindow : public Gosu::Window
     const double BalkenYBoden = 600;
     const double BalkenYDecke = 0;
     double score_zaehler;
-    double x_player ;
-    double y_player;
+    double x_player_flappybiene ;
+    double y_player_flappybiene;
     double velocity_flappy_biene ; //Bewegungs Geschwindigkeit
-    int rot;       //Rotation des Players
+    int rot_flappybiene;       //Rotation des Players
     double x_verschiebung;
     double x1;
     double x2;
@@ -127,6 +127,7 @@ class GameWindow : public Gosu::Window
     double y_funktion_flappybiene;
     bool start_ruhe_flappy_biene;
     bool initial_down_spacebar_flappybiene;
+    bool got_score_1_flappybiene, got_score_2_flappybiene, got_score_3_flappybiene;
     //Snake   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Gosu::Font anzeige_score_snake = { 30 };
     Gosu::Font anzeige_restart_snake = { 30 };
@@ -178,11 +179,11 @@ public:
 
     void restart_flappy_bird() {
         score_zaehler = 0;
-        x_player = 100;
-        y_player = 300;
+        x_player_flappybiene = 100;
+        y_player_flappybiene = 300;
         velocity_flappy_biene = 3;
-        rot = 90;
-        x_verschiebung = 700;
+        rot_flappybiene = 90;
+        x_verschiebung = 600;
         x1 = 500;
         x2 = 600;
         x3 = x1 + x_verschiebung;
@@ -201,10 +202,13 @@ public:
         rundenzaehler = 0;
         gestorben = false;
         spacebar_down = false;
-        y_funktion_flappybiene = y_player;
+        y_funktion_flappybiene = y_player_flappybiene;
         x_funktion_flappybiene = 0;
         start_ruhe_flappy_biene = true;
         initial_down_spacebar_flappybiene = false;
+        got_score_1_flappybiene = false;
+        got_score_2_flappybiene = false;
+        got_score_3_flappybiene = false;
     }
 
     void restart_snake() {
@@ -344,7 +348,7 @@ public:
                 if (!initial_down_spacebar_flappybiene)
                     ansage_flappybiene.draw_text_rel("Press Space Bar to start", 500, 300, 2, 0.5, 0.5, 1, 1, Gosu::Color::RED);
 
-                Bildplayer.draw_rot(x_player, y_player, 2, rot
+                Bildplayer.draw_rot(x_player_flappybiene, y_player_flappybiene, 2, rot_flappybiene
                     , 0.5, 0.5,
                     0.1, 0.1
                 );
@@ -407,13 +411,13 @@ public:
                 if (gestorben) {          //Anzeige Menü Bildschirm
 
                     velocity_flappy_biene = 0;
-                    if (y_player < 590) {  
-                        y_player += 5; //Player fällt runter
-                        rot = 180;
+                    if (y_player_flappybiene < 590) {  
+                        y_player_flappybiene += 5; //Player fällt runter
+                        rot_flappybiene = 180;
                     }
-                    if (y_player >= 590) {
+                    if (y_player_flappybiene >= 590) {
                         anzeige_gameover_flappy_biene.draw_text_rel("Game Over", 500, 300, 4, 0.5, 0.5, 1, 1, Gosu::Color::RED);
-                        rot = 90;
+                        rot_flappybiene = 90;
                         TimeDelayDeth += 0.08;
                     }
 
@@ -589,16 +593,16 @@ public:
 
                     if (initial_down_spacebar_flappybiene) {
                         if (x_funktion_flappybiene < 2) {
-                            y_player -= 6;
-                            y_funktion_flappybiene = y_player;
-                            rot = 45;
+                            y_player_flappybiene -= 6;
+                            y_funktion_flappybiene = y_player_flappybiene;
+                            rot_flappybiene = 45;
                         }
                         else if (x_funktion_flappybiene >= 3) {
-                            y_player = y_funktion_flappybiene + 5 * (pow((x_funktion_flappybiene - 3), 2));
-                            rot = 135;
+                            y_player_flappybiene = y_funktion_flappybiene + 5 * (pow((x_funktion_flappybiene - 3), 2));
+                            rot_flappybiene = 135;
                         }
                         else
-                            rot = 90;
+                            rot_flappybiene = 90;
 
                         x_funktion_flappybiene += 0.2;
                     }
@@ -676,13 +680,34 @@ public:
                     x6 = x4 + x_verschiebung;
                     y_verschiebung3 = Gosu::random(-BalkenYMitteOben, 600 - BalkenYMitteUnten);
                 }
-                if (!gestorben) {
-                    score_zaehler += score_increase;             //Scorezähler->Score ist int, score_zaehler ist double und wird immer um score_increade (= 1/60) erhöht->wenn score_zaehler 1 ist, dann wird score um 1 erhöht
+                //if (!gestorben) {
+                //    score_zaehler += score_increase;             //Scorezähler->Score ist int, score_zaehler ist double und wird immer um score_increade (= 1/60) erhöht->wenn score_zaehler 1 ist, dann wird score um 1 erhöht
+                //}
+                //if (score_zaehler > 1) {
+                //    score += 1;
+                //    score_zaehler = 0;
+                //}
+
+                if (x_player_flappybiene >= x1 + 20 && x_player_flappybiene <= x2 - 20 && y_player_flappybiene > BalkenYMitteOben + y_verschiebung && y_player_flappybiene < BalkenYMitteUnten + y_verschiebung && !got_score_1_flappybiene) {
+                    score++;
+                    got_score_1_flappybiene = true;
                 }
-                if (score_zaehler > 1) {
-                    score += 1;
-                    score_zaehler = 0;
+                if (x_player_flappybiene >= x3 + 20 && x_player_flappybiene <= x4 - 20 && y_player_flappybiene > BalkenYMitteOben + y_verschiebung2 && y_player_flappybiene < BalkenYMitteUnten + y_verschiebung2 && !got_score_2_flappybiene) {
+                    score++;
+                    got_score_2_flappybiene = true;
                 }
+                if (x_player_flappybiene >= x5 + 20 && x_player_flappybiene <= x6 - 20 && y_player_flappybiene > BalkenYMitteOben + y_verschiebung3 && y_player_flappybiene < BalkenYMitteUnten + y_verschiebung3 && !got_score_3_flappybiene) {
+                    score++;
+                    got_score_3_flappybiene = true;
+                }
+                if (x_player_flappybiene > x2)
+                    got_score_1_flappybiene = false;
+                if (x_player_flappybiene > x4)
+                    got_score_2_flappybiene = false;
+                if (x_player_flappybiene > x6)
+                    got_score_3_flappybiene = false;
+                
+
                 if (score == speed_increase_at_score) {             //wenn bestimmter Score erreicht wird, steigt Geschwindigkeit, Score_increase -> passiert alle 50 Score Punkte
                     velocity_flappy_biene++;
                     speed_increase_at_score += speed_increase_at_score;
@@ -690,20 +715,20 @@ public:
                 }
 
 
-                if (x_player >= x1 && x_player <= x2 && ((y_player >= (BalkenYMitteUnten + y_verschiebung) && y_player <= BalkenYBoden) || (y_player >= BalkenYDecke && y_player <= BalkenYMitteOben + y_verschiebung))) { //Abfrage, ob man gegen Hinderniss geflogen ist -> Game Over
+                if (x_player_flappybiene >= x1 && x_player_flappybiene <= x2 && ((y_player_flappybiene >= (BalkenYMitteUnten + y_verschiebung) && y_player_flappybiene <= BalkenYBoden) || (y_player_flappybiene >= BalkenYDecke && y_player_flappybiene <= BalkenYMitteOben + y_verschiebung))) { //Abfrage, ob man gegen Hinderniss geflogen ist -> Game Over
                     gestorben = true;
 
                 }
-                if (x_player >= x3 && x_player <= x4 && ((y_player >= BalkenYMitteUnten + y_verschiebung2 && y_player <= BalkenYBoden) || (y_player >= BalkenYDecke && y_player <= BalkenYMitteOben + y_verschiebung2))) {
+                if (x_player_flappybiene >= x3 && x_player_flappybiene <= x4 && ((y_player_flappybiene >= BalkenYMitteUnten + y_verschiebung2 && y_player_flappybiene <= BalkenYBoden) || (y_player_flappybiene >= BalkenYDecke && y_player_flappybiene <= BalkenYMitteOben + y_verschiebung2))) {
                     gestorben = true;
 
                 }
-                if (x_player >= x5 && x_player <= x6 && ((y_player >= BalkenYMitteUnten + y_verschiebung3 && y_player <= BalkenYBoden) || (y_player >= BalkenYDecke && y_player <= BalkenYMitteOben + y_verschiebung3))) {
+                if (x_player_flappybiene >= x5 && x_player_flappybiene <= x6 && ((y_player_flappybiene >= BalkenYMitteUnten + y_verschiebung3 && y_player_flappybiene <= BalkenYBoden) || (y_player_flappybiene >= BalkenYDecke && y_player_flappybiene <= BalkenYMitteOben + y_verschiebung3))) {
                     gestorben = true;
 
                 }
 
-                if (x_player < 0 || x_player > 11000 || y_player > 600 || y_player < 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
+                if (x_player_flappybiene < 0 || x_player_flappybiene > 1000 || y_player_flappybiene > 600 || y_player_flappybiene < 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
                     gestorben = true;
 
             }
