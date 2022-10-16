@@ -355,50 +355,50 @@ public:
                 Hintergrund.draw(0, 0, 0, 2, 2);
 
                 graphics().draw_quad(
-                    x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::GREEN,
-                    x2, BalkenYMitteUnten + y_verschiebung, Gosu::Color::GREEN,
-                    x2, BalkenYBoden, Gosu::Color::GREEN,
-                    x1, BalkenYBoden, Gosu::Color::GREEN,
+                    x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::FUCHSIA,
+                    x2, BalkenYMitteUnten + y_verschiebung, Gosu::Color::FUCHSIA,
+                    x2, BalkenYBoden, Gosu::Color::FUCHSIA,
+                    x1, BalkenYBoden, Gosu::Color::FUCHSIA,
                     1
                 );
 
                 graphics().draw_quad(
-                    x1, BalkenYDecke, Gosu::Color::WHITE,
-                    x2, BalkenYDecke, Gosu::Color::WHITE,
-                    x2, BalkenYMitteOben + y_verschiebung, Gosu::Color::WHITE,
-                    x1, BalkenYMitteOben + y_verschiebung, Gosu::Color::WHITE,
+                    x1, BalkenYDecke, Gosu::Color::FUCHSIA,
+                    x2, BalkenYDecke, Gosu::Color::FUCHSIA,
+                    x2, BalkenYMitteOben + y_verschiebung, Gosu::Color::FUCHSIA,
+                    x1, BalkenYMitteOben + y_verschiebung, Gosu::Color::FUCHSIA,
                     1
                 );
 
                 graphics().draw_quad(
-                    x3, BalkenYMitteUnten + y_verschiebung2, Gosu::Color::WHITE,
-                    x4, BalkenYMitteUnten + y_verschiebung2, Gosu::Color::WHITE,
-                    x4, BalkenYBoden, Gosu::Color::WHITE,
-                    x3, BalkenYBoden, Gosu::Color::WHITE,
+                    x3, BalkenYMitteUnten + y_verschiebung2, Gosu::Color::FUCHSIA,
+                    x4, BalkenYMitteUnten + y_verschiebung2, Gosu::Color::FUCHSIA,
+                    x4, BalkenYBoden, Gosu::Color::FUCHSIA,
+                    x3, BalkenYBoden, Gosu::Color::FUCHSIA,
                     1
                 );
 
                 graphics().draw_quad(
-                    x3, BalkenYDecke, Gosu::Color::WHITE,
-                    x4, BalkenYDecke, Gosu::Color::WHITE,
-                    x4, BalkenYMitteOben + y_verschiebung2, Gosu::Color::WHITE,
-                    x3, BalkenYMitteOben + y_verschiebung2, Gosu::Color::WHITE,
+                    x3, BalkenYDecke, Gosu::Color::FUCHSIA,
+                    x4, BalkenYDecke, Gosu::Color::FUCHSIA,
+                    x4, BalkenYMitteOben + y_verschiebung2, Gosu::Color::FUCHSIA,
+                    x3, BalkenYMitteOben + y_verschiebung2, Gosu::Color::FUCHSIA,
                     1
                 );
 
                 graphics().draw_quad(
-                    x5, BalkenYMitteUnten + y_verschiebung3, Gosu::Color::WHITE,
-                    x6, BalkenYMitteUnten + y_verschiebung3, Gosu::Color::WHITE,
-                    x6, BalkenYBoden, Gosu::Color::WHITE,
-                    x5, BalkenYBoden, Gosu::Color::WHITE,
+                    x5, BalkenYMitteUnten + y_verschiebung3, Gosu::Color::FUCHSIA,
+                    x6, BalkenYMitteUnten + y_verschiebung3, Gosu::Color::FUCHSIA,
+                    x6, BalkenYBoden, Gosu::Color::FUCHSIA,
+                    x5, BalkenYBoden, Gosu::Color::FUCHSIA,
                     1
                 );
 
                 graphics().draw_quad(
-                    x5, BalkenYDecke, Gosu::Color::WHITE,
-                    x6, BalkenYDecke, Gosu::Color::WHITE,
-                    x5, BalkenYMitteOben + y_verschiebung3, Gosu::Color::WHITE,
-                    x6, BalkenYMitteOben + y_verschiebung3, Gosu::Color::WHITE,
+                    x5, BalkenYDecke, Gosu::Color::FUCHSIA,
+                    x6, BalkenYDecke, Gosu::Color::FUCHSIA,
+                    x5, BalkenYMitteOben + y_verschiebung3, Gosu::Color::FUCHSIA,
+                    x6, BalkenYMitteOben + y_verschiebung3, Gosu::Color::FUCHSIA,
                     1
                 );
 
