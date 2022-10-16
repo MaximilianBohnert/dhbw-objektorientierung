@@ -49,8 +49,8 @@ public:
 
 
 struct SpaceAsteorid {
-    const int AsteroidBreite = 30;
-    const int AsteroidLaenge = 30;
+    int AsteroidBreite = 30;
+    int AsteroidLaenge = 30;
     const int AsteroidPos = 1;
     const Gosu::Color FarbeAsteroid = Gosu::Color::GRAY;
     double AsteroidX;
@@ -242,6 +242,8 @@ public:
     void erstelleAsteroid(vector<SpaceAsteorid>& AstVect) {
         double y = Gosu::random(0, 800);
         SpaceAsteorid ast;
+        ast.AsteroidBreite = Gosu::random(30, 50);
+        ast.AsteroidLaenge = Gosu::random(30, 50);
         ast.AsteroidX = 1000;
         ast.AsteroidY = y;
         AstVect.push_back(ast);
