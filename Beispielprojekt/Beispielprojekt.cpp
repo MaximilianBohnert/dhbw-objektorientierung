@@ -381,7 +381,7 @@ public:
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 1) {
             string punkte = to_string(score);
-
+            Hintergrund.draw(0, 0, 0, 2, 2);
             if (spieler.get_status()) {
 
                 if (!initial_down_spacebar_flappybiene)
@@ -391,7 +391,7 @@ public:
                     , 0.5, 0.5,
                     0.1, 0.1
                 );
-                Hintergrund.draw(0, 0, 0, 2, 2);
+                
 
                 graphics().draw_quad(
                     x1, BalkenYMitteUnten + y_verschiebung, Gosu::Color::FUCHSIA,
@@ -469,7 +469,7 @@ public:
                 if (spieler.get_highscore() < score)
                     spieler.set_highscore(score);
 
-                graphics().draw_quad(0, 0, Gosu::Color::GREEN, 0, 600, Gosu::Color::GREEN, 1000, 600, Gosu::Color::GREEN, 1000, 0, Gosu::Color::GREEN, 0);
+   
                 graphics().draw_quad(450, 270, Gosu::Color::BLUE, 450, 330, Gosu::Color::BLUE, 550, 330, Gosu::Color::BLUE, 550, 270, Gosu::Color::BLUE, 1);
                 Gosu::Font(30).draw_text_rel("PLAY", 500, 300, 2, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
 
@@ -484,7 +484,7 @@ public:
                 if (rundenzaehler > 0)
                     anzeige_runde_flappy_biene.draw_text("Runde: " + runde, 0, 530, 2, 1, 1, Gosu::Color::BLACK);
 
-                anzeige_score_flappy_biene.draw_text_rel("Score: " + punkte, 0, 600, 2, 0, 1, 1, 1, Gosu::Color::BLACK);
+                anzeige_score_flappy_biene.draw_text_rel("Score: " + punkte, 0, 595, 2, 0, 1, 1, 1, Gosu::Color::BLACK);
             }
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
