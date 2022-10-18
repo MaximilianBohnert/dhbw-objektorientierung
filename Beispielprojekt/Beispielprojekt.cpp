@@ -57,13 +57,13 @@ struct SpaceAsteorid {
     double AsteroidY;
     bool hit = false;
 
-    /* Maximilian
+   
     int leben = 2;
     int Staubcounter = 0;
     int counterMax = 100;
-    double scale = 0.5;
+    double scale = 0.8;
     int rotation = 1;
-   */
+   
 
 };
 
@@ -269,14 +269,14 @@ public:
         ast.AsteroidX = 1000;
         ast.AsteroidY = y;
       
-        /* Maximilian
-        ast.leben = 2;
+        
+        
 
         if (ast.AsteroidBreite >= 40 || ast.AsteroidLaenge >= 40) {
             ast.leben = 2;
             ast.scale = 1;
         }
-        */
+        
         AstVect.push_back(ast);
     }
     void AstInRange() {
@@ -285,25 +285,25 @@ public:
         bool raus = false;
         bool AstRaus = false;
         for (int ast = 0; ast < Asteroiden.size(); ast++  /* && Asteroiden.at(ast).leben >= 2 */) {
-            if (Asteroiden.at(ast).AsteroidX <= SpaceBeeX + 30 && Asteroiden.at(ast).AsteroidY >= SpaceBeeY - 40 && Asteroiden.at(ast).AsteroidY <= SpaceBeeY + 40) {
+            if (Asteroiden.at(ast).AsteroidX <= SpaceBeeX + 30 && Asteroiden.at(ast).AsteroidY >= SpaceBeeY - 40 && Asteroiden.at(ast).AsteroidY <= SpaceBeeY + 40 && Asteroiden.at(ast).leben>=1) {
                 gestorben = true;
-                Asteroiden.at(ast).hit = true;
-                //Asteroiden.at(ast).leben = 0;
+                //Asteroiden.at(ast).hit = true;
+                Asteroiden.at(ast).leben = 0;
                 break;
             }
             else if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
                 Space_Speed_increase = true;
-                Asteroiden.at(ast).hit = true;
-                //Asteroiden.at(ast).leben = 0;
+                //Asteroiden.at(ast).hit = true;
+                Asteroiden.at(ast).leben = 0;
             }
             else {
                 for (int st = 0; st < stachel.size(); st++) {
                     if (stachel.at(st).stachelX >= Asteroiden.at(ast).AsteroidX && stachel.at(st).stachelX <= Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).AsteroidBreite
                         && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY+ Asteroiden.at(ast).AsteroidLaenge + stachel.at(st).StachelHoehe)&& (stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY ))) {
                         SpaceScore++;
-                        Asteroiden.at(ast).hit = true;
-                        //Asteroiden.at(ast).leben --;
+                        //Asteroiden.at(ast).hit = true;
+                        Asteroiden.at(ast).leben --;
                         stachel.at(st).existent = false;
                     }
                     else if (stachel.at(st).stachelX >= 900.0) {
@@ -321,10 +321,9 @@ public:
         vector<SpaceAsteorid> helpAst;
         for (int ast = 0; ast < Asteroiden.size(); ast++) {
 
-            // if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= Asteroiden.at(ast).counterMax) {           }
+             if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter >= Asteroiden.at(ast).counterMax) {           }
             
-            if (Asteroiden.at(ast).hit == true) {
-            }
+            //if (Asteroiden.at(ast).hit == true) }
             else {
                 helpAst.push_back(Asteroiden.at(ast));
             }
@@ -567,77 +566,58 @@ public:
                 );
 
                 for (int ast = 0; ast < Asteroiden.size(); ast++) {
-                    if (Asteroiden.at(ast).hit == false) {
-                        graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                    }
-
-                    /*MAximilian
                     if (Asteroiden.at(ast).leben == 2) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        AsteroidGanz.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        AsteroidGanz.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY,2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                     }
+
 
                     else if (Asteroiden.at(ast).leben == 1) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        AsteroidGebrochen.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        AsteroidGebrochen.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 15 && Asteroiden.at(ast).Staubcounter >=0) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub1.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        Staub1.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
 
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 30 && Asteroiden.at(ast).Staubcounter >= 16) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub2.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        Staub2.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 45 && Asteroiden.at(ast).Staubcounter >= 31) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub3.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        Staub3.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
 
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 60 && Asteroiden.at(ast).Staubcounter >= 46) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub4.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        Staub4.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 75 && Asteroiden.at(ast).Staubcounter >= 61) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub5.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        Staub5.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 100 && Asteroiden.at(ast).Staubcounter >= 76) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub6.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
-                            0.1, 0.1
-                        );
+                        Staub6.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
+
                         Asteroiden.at(ast).Staubcounter++;
                     }
-*/
+
                 }
 
 
