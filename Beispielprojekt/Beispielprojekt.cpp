@@ -475,7 +475,7 @@ public:
                 Gosu::Font(30).draw_text_rel("PLAY", 500, 300, 2, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
 
                 graphics().draw_quad(700, 40, Gosu::Color::BLUE, 700, 100, Gosu::Color::BLUE, 960, 100, Gosu::Color::BLUE, 960, 40, Gosu::Color::BLUE, 1);
-                auswahlmenu.draw_text_rel("Auswahlbildschirm", 830, 70, 2, 0.5, 0.5,1, 1, Gosu::Color::BLACK);
+                auswahlmenu.draw_text_rel("Auswahlbildschirm", 830, 70, 2, 0.5, 0.5, 1, 1, Gosu::Color::BLACK);
 
 
                 string highscore_s = to_string(spieler.get_highscore());
@@ -565,11 +565,12 @@ public:
                     , 0.5, 0.5,
                     0.1, 0.1
                 );
-               
+
                 for (int ast = 0; ast < Asteroiden.size(); ast++) {
                     if (Asteroiden.at(ast).hit == false) {
                         graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                     }
+
                     /*MAximilian
                     if (Asteroiden.at(ast).leben == 2) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
@@ -578,7 +579,7 @@ public:
                             0.1, 0.1
                         );
                     }
-                    
+
                     else if (Asteroiden.at(ast).leben == 1) {
                         //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         AsteroidGebrochen.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
@@ -636,10 +637,10 @@ public:
                         );
                         Asteroiden.at(ast).Staubcounter++;
                     }
-                    
+*/
                 }
-                */
-            
+
+
                 for (int st = 0; st < stachel.size(); st++) {
                     if (stachel.at(st).existent) {
                         graphics().draw_rect(stachel.at(st).stachelX, stachel.at(st).stachelY, stachel.at(st).StachelBreite, stachel.at(st).StachelHoehe, stachel.at(st).FarbeStachel, stachel.at(st).StachelHoehe);
@@ -656,7 +657,10 @@ public:
 
 
 
-    }
+
+    };
+    
+
 
     // Wird 60x pro Sekunde aufgerufen
     void update() override
@@ -867,7 +871,7 @@ public:
                 hitobx_increase += 1;
             }
 
-            if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT) && !spielstatus ) {               //Auswahlbildschrim ausgewählt
+            if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT) && !spielstatus) {               //Auswahlbildschrim ausgewählt
                 spiel_auswahl = 0;
             }
 
@@ -879,7 +883,7 @@ public:
                 return;
             }
 
-            if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT) && ((!initial_start && !spielstatus) || (pause|| spielstatus) )) {		//restart Button gedrückt
+            if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && input().down(Gosu::Button::MS_LEFT) && ((!initial_start && !spielstatus) || (pause || spielstatus))) {		//restart Button gedrückt
                 restart_snake();
                 pause = false;
                 spielstatus = true;
@@ -961,7 +965,7 @@ public:
 
 
             if (!pause) {
-                if (rechts){
+                if (rechts) {
 
                     snake.at(0).x_pos += velocity_snake;
 
@@ -1025,7 +1029,7 @@ public:
                                     it_außen_hinten->x_pos -= velocity_snake;
                             }
                             if (it_außen_vorn->richtung == 1 && !reingefahren_snake) {
-                                if ((it_außen_vorn->rechts_out_of_screen || it_außen_hinten->rechts_out_of_screen) && it_außen_hinten->x_pos <=990) {
+                                if ((it_außen_vorn->rechts_out_of_screen || it_außen_hinten->rechts_out_of_screen) && it_außen_hinten->x_pos <= 990) {
                                     it_außen_hinten->x_pos += velocity_snake;
                                     it_außen_hinten->rechts_out_of_screen = true;
                                 }
@@ -1177,8 +1181,10 @@ public:
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
-    }
+    
     };
+};
+    
 
 
     // C++ Hauptprogramm
