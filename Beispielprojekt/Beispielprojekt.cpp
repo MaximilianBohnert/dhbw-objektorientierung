@@ -55,14 +55,14 @@ struct SpaceAsteorid {
     const Gosu::Color FarbeAsteroid = Gosu::Color::GRAY;
     double AsteroidX;
     double AsteroidY;
-    bool hit = false;
+    //bool hit = false;
 
    
-    int leben = 2;
+    int leben = 1;
     int Staubcounter = 0;
     int counterMax = 100;
     double scale = 0.8;
-    int rotation = 1;
+    //int rotation = 1;
    
 
 };
@@ -167,7 +167,7 @@ class GameWindow : public Gosu::Window
     double SpaceSpeed = 3;
     bool SpaceSpielen = false;
     int AstAnzahl = 0;
-    double stachelSpeed = 5;
+    double stachelSpeed = 4;
     int ScoreNichtZerstoert;
     double stachelspeed = 4;
     int stachelzahl;
@@ -284,8 +284,8 @@ public:
         vector<NahKapfstachel> helpStachel;
         bool raus = false;
         bool AstRaus = false;
-        for (int ast = 0; ast < Asteroiden.size(); ast++  /* && Asteroiden.at(ast).leben >= 2 */) {
-            if (Asteroiden.at(ast).AsteroidX <= SpaceBeeX + 30 && Asteroiden.at(ast).AsteroidY >= SpaceBeeY - 40 && Asteroiden.at(ast).AsteroidY <= SpaceBeeY + 40 && Asteroiden.at(ast).leben>=1) {
+        for (int ast = 0; ast < Asteroiden.size(); ast++) {
+            if (Asteroiden.at(ast).AsteroidX <= SpaceBeeX + 20 && Asteroiden.at(ast).AsteroidY >= SpaceBeeY - 70 && Asteroiden.at(ast).AsteroidY <= SpaceBeeY + 20 && Asteroiden.at(ast).leben>=1) {
                 gestorben = true;
                 //Asteroiden.at(ast).hit = true;
                 Asteroiden.at(ast).leben = 0;
@@ -293,7 +293,7 @@ public:
             }
             else if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
-                Space_Speed_increase = true;
+                //Space_Speed_increase = true;
                 //Asteroiden.at(ast).hit = true;
                 Asteroiden.at(ast).leben = 0;
             }
@@ -302,6 +302,7 @@ public:
                     if (stachel.at(st).stachelX >= Asteroiden.at(ast).AsteroidX && stachel.at(st).stachelX <= Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).AsteroidBreite
                         && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY+ Asteroiden.at(ast).AsteroidLaenge + stachel.at(st).StachelHoehe)&& (stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY ))) {
                         SpaceScore++;
+                        Space_Speed_increase = true;
                         //Asteroiden.at(ast).hit = true;
                         Asteroiden.at(ast).leben --;
                         stachel.at(st).existent = false;
@@ -567,51 +568,40 @@ public:
 
                 for (int ast = 0; ast < Asteroiden.size(); ast++) {
                     if (Asteroiden.at(ast).leben == 2) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         AsteroidGanz.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY,2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                     }
-
-
                     else if (Asteroiden.at(ast).leben == 1) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         AsteroidGebrochen.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 15 && Asteroiden.at(ast).Staubcounter >=0) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         Staub1.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
 
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 30 && Asteroiden.at(ast).Staubcounter >= 16) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
-                        Staub2.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
-                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
-                        Asteroiden.at(ast).Staubcounter++;
+                            Staub2.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
+                            Asteroiden.at(ast).Staubcounter++;
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 45 && Asteroiden.at(ast).Staubcounter >= 31) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         Staub3.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
 
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 60 && Asteroiden.at(ast).Staubcounter >= 46) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         Staub4.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 75 && Asteroiden.at(ast).Staubcounter >= 61) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         Staub5.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
                         Asteroiden.at(ast).Staubcounter++;
                     }
                     else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 100 && Asteroiden.at(ast).Staubcounter >= 76) {
-                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                         Staub6.draw(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2,
                             Asteroiden.at(ast).scale, Asteroiden.at(ast).scale);
 
@@ -619,7 +609,6 @@ public:
                     }
 
                 }
-
 
                 for (int st = 0; st < stachel.size(); st++) {
                     if (stachel.at(st).existent) {
@@ -635,12 +624,7 @@ public:
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-
     };
-    
-
 
     // Wird 60x pro Sekunde aufgerufen
     void update() override
@@ -1120,7 +1104,7 @@ public:
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 3) {
             if (!gestorben) {
-                if (SpaceScore % Space_Speed_increase_at == 0 && Space_Speed_increase /* && SpaceScore <= 30*/) {
+                if (SpaceScore % Space_Speed_increase_at == 0 && Space_Speed_increase  && SpaceScore <= 30) {
                     SpaceSpeed = SpaceSpeed * SpaceSpeedincrease;
                     Space_Speed_increase = false;
                 }
