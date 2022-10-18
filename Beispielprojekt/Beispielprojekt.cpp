@@ -175,7 +175,7 @@ class GameWindow : public Gosu::Window
     bool Space_Speed_increase = false;
     int Space_Speed_increase_at = 5;
     Gosu::Image SpaceHintergrund;
-    /* Maximilian
+    
     Gosu::Image AsteroidGanz;
     Gosu::Image AsteroidGebrochen;
     Gosu::Image Staub1;
@@ -184,17 +184,17 @@ class GameWindow : public Gosu::Window
     Gosu::Image Staub4;
     Gosu::Image Staub5;
     Gosu::Image Staub6;
-    */
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 public:
 
     GameWindow() : Window(1000, 600), Bildplayer("biene.png"),Hintergrund("pixelhimmel.png"),SpaceHintergrund("Space.jpeg")
-        /* Maximilian
+       
         , AsteroidGanz("AsteroidGanz.png"), AsteroidGebrochen("AsteroidGebrochen.png"), Staub1("Staub1.png"), Staub2("Staub2.png")
         ,Staub3("Staub3.png"), Staub4("Staub4.png"), Staub5("Staub5.png"), Staub6("Staub6.png")
-        */
+        
     {
         set_caption("Flappy Biene");
     }
