@@ -56,7 +56,15 @@ struct SpaceAsteorid {
     double AsteroidX;
     double AsteroidY;
     bool hit = false;
-   
+
+    /* Maximilian
+    int leben = 2;
+    int Staubcounter = 0;
+    int counterMax = 100;
+    double scale = 0.5;
+    int rotation = 1;
+   */
+
 };
 
 struct NahKapfstachel
@@ -167,12 +175,26 @@ class GameWindow : public Gosu::Window
     bool Space_Speed_increase = false;
     int Space_Speed_increase_at = 5;
     Gosu::Image SpaceHintergrund;
+    /* Maximilian
+    Gosu::Image AsteroidGanz;
+    Gosu::Image AsteroidGebrochen;
+    Gosu::Image Staub1;
+    Gosu::Image Staub2;
+    Gosu::Image Staub3;
+    Gosu::Image Staub4;
+    Gosu::Image Staub5;
+    Gosu::Image Staub6;
+    */
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
 
 public:
 
     GameWindow() : Window(1000, 600), Bildplayer("biene.png"),Hintergrund("pixelhimmel.png"),SpaceHintergrund("Space.jpeg")
+        /* Maximilian
+        , AsteroidGanz("AsteroidGanz.png"), AsteroidGebrochen("AsteroidGebrochen.png"), Staub1("Staub1.png"), Staub2("Staub2.png")
+        ,Staub3("Staub3.png"), Staub4("Staub4.png"), Staub5("Staub5.png"), Staub6("Staub6.png")
+        */
     {
         set_caption("Flappy Biene");
     }
@@ -226,7 +248,7 @@ public:
     }
     ///////////////////////// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void restart_space() {
-        Asteroiden.clear(); 
+        Asteroiden.clear();
         stachel.clear();
         SpaceBeeY = 400;
         SpaceScore = 0;
@@ -246,23 +268,34 @@ public:
         ast.AsteroidLaenge = Gosu::random(30, 50);
         ast.AsteroidX = 1000;
         ast.AsteroidY = y;
+      
+        /* Maximilian
+        ast.leben = 2;
+
+        if (ast.AsteroidBreite >= 40 || ast.AsteroidLaenge >= 40) {
+            ast.leben = 2;
+            ast.scale = 1;
+        }
+        */
         AstVect.push_back(ast);
-    }  
-    void AstInRange() {                 
+    }
+    void AstInRange() {
         vector<SpaceAsteorid> hilfsvector;
         vector<NahKapfstachel> helpStachel;
         bool raus = false;
-        bool AstRaus = false;  
-        for (int ast = 0; ast < Asteroiden.size(); ast++) {
+        bool AstRaus = false;
+        for (int ast = 0; ast < Asteroiden.size(); ast++  /* && Asteroiden.at(ast).leben >= 2 */) {
             if (Asteroiden.at(ast).AsteroidX <= SpaceBeeX + 30 && Asteroiden.at(ast).AsteroidY >= SpaceBeeY - 40 && Asteroiden.at(ast).AsteroidY <= SpaceBeeY + 40) {
                 gestorben = true;
                 Asteroiden.at(ast).hit = true;
+                //Asteroiden.at(ast).leben = 0;
                 break;
             }
             else if (Asteroiden.at(ast).AsteroidX <= 0) {
                 ScoreNichtZerstoert++;
                 Space_Speed_increase = true;
                 Asteroiden.at(ast).hit = true;
+                //Asteroiden.at(ast).leben = 0;
             }
             else {
                 for (int st = 0; st < stachel.size(); st++) {
@@ -270,8 +303,9 @@ public:
                         && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY+ Asteroiden.at(ast).AsteroidLaenge + stachel.at(st).StachelHoehe)&& (stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY ))) {
                         SpaceScore++;
                         Asteroiden.at(ast).hit = true;
+                        //Asteroiden.at(ast).leben --;
                         stachel.at(st).existent = false;
-                    }                      
+                    }
                     else if (stachel.at(st).stachelX >= 900.0) {
                         stachel.at(st).existent = false;
                     }
@@ -286,6 +320,9 @@ public:
     void loescheObjekte() {
         vector<SpaceAsteorid> helpAst;
         for (int ast = 0; ast < Asteroiden.size(); ast++) {
+
+            // if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= Asteroiden.at(ast).counterMax) {           }
+            
             if (Asteroiden.at(ast).hit == true) {
             }
             else {
@@ -318,6 +355,7 @@ public:
     void AsteroidenBewegen() {
         for (SpaceAsteorid& ast : Asteroiden) {
             ast.AsteroidX = ast.AsteroidX - SpaceSpeed;
+            //ast.rotation++;
 
             if ((SpaceBeeX <= (ast.AsteroidX + (ast.AsteroidBreite / 2)) && SpaceBeeX >= (ast.AsteroidX - (ast.AsteroidBreite / 2))) &&
                 (SpaceBeeY <= (ast.AsteroidY - (ast.AsteroidLaenge / 2)) && SpaceBeeY >= (ast.AsteroidY + (ast.AsteroidLaenge / 2))))
@@ -327,7 +365,7 @@ public:
             }
         }
     }
-  
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     void draw() override
     {
@@ -413,7 +451,7 @@ public:
                 if (gestorben) {          //Anzeige Menü Bildschirm
 
                     velocity_flappy_biene = 0;
-                    if (y_player_flappybiene < 590) {  
+                    if (y_player_flappybiene < 590) {
                         y_player_flappybiene += 5; //Player fällt runter
                         rot_flappybiene = 180;
                     }
@@ -449,7 +487,7 @@ public:
 
                 anzeige_score_flappy_biene.draw_text_rel("Score: " + punkte, 0, 600, 2, 0, 1, 1, 1, Gosu::Color::BLACK);
             }
-        }       
+        }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 2) {
 
@@ -486,7 +524,7 @@ public:
                     950, 35, Gosu::Color::WHITE, 1);
 
             }
-          
+
             for (auto it = bonus_liste.begin(); it != bonus_liste.end(); it++) {
                 graphics().draw_quad(it->x_pos_bonus - 5, it->y_pos_bonus - 5, Gosu::Color::GREEN,
                     it->x_pos_bonus + 5, it->y_pos_bonus - 5, Gosu::Color::GREEN,
@@ -514,7 +552,7 @@ public:
                 }
             }
 
-        }   
+        }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 3) {
             SpaceHintergrund.draw(0, 0, 0, 0.8, 0.5);
@@ -527,11 +565,81 @@ public:
                     , 0.5, 0.5,
                     0.1, 0.1
                 );
+               
                 for (int ast = 0; ast < Asteroiden.size(); ast++) {
                     if (Asteroiden.at(ast).hit == false) {
                         graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
                     }
+                    /*MAximilian
+                    if (Asteroiden.at(ast).leben == 2) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        AsteroidGanz.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                    }
+                    
+                    else if (Asteroiden.at(ast).leben == 1) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        AsteroidGebrochen.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                    }
+                    else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 15 && Asteroiden.at(ast).Staubcounter >=0) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        Staub1.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                        Asteroiden.at(ast).Staubcounter++;
+
+                    }
+                    else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 30 && Asteroiden.at(ast).Staubcounter >= 16) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        Staub2.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                        Asteroiden.at(ast).Staubcounter++;
+                    }
+                    else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 45 && Asteroiden.at(ast).Staubcounter >= 31) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        Staub3.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                        Asteroiden.at(ast).Staubcounter++;
+
+                    }
+                    else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 60 && Asteroiden.at(ast).Staubcounter >= 46) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        Staub4.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                        Asteroiden.at(ast).Staubcounter++;
+                    }
+                    else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 75 && Asteroiden.at(ast).Staubcounter >= 61) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        Staub5.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                        Asteroiden.at(ast).Staubcounter++;
+                    }
+                    else if (Asteroiden.at(ast).leben == 0 && Asteroiden.at(ast).Staubcounter <= 100 && Asteroiden.at(ast).Staubcounter >= 76) {
+                        //graphics().draw_rect(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, Asteroiden.at(ast).AsteroidLaenge, Asteroiden.at(ast).AsteroidBreite, Asteroiden.at(ast).FarbeAsteroid, Asteroiden.at(ast).AsteroidPos);
+                        Staub6.draw_rot(Asteroiden.at(ast).AsteroidX, Asteroiden.at(ast).AsteroidY, 2, Asteroiden.at(ast).rotation,
+                            Asteroiden.at(ast).scale, Asteroiden.at(ast).scale,
+                            0.1, 0.1
+                        );
+                        Asteroiden.at(ast).Staubcounter++;
+                    }
+                    
                 }
+                */
+            
                 for (int st = 0; st < stachel.size(); st++) {
                     if (stachel.at(st).existent) {
                         graphics().draw_rect(stachel.at(st).stachelX, stachel.at(st).stachelY, stachel.at(st).StachelBreite, stachel.at(st).StachelHoehe, stachel.at(st).FarbeStachel, stachel.at(st).StachelHoehe);
@@ -545,10 +653,10 @@ public:
             }
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 
-           
-        
- }
+
+
+
+    }
 
     // Wird 60x pro Sekunde aufgerufen
     void update() override
@@ -556,9 +664,9 @@ public:
 
         maus_x = input().mouse_x();            //Position Maus
         maus_y = input().mouse_y();
-  
-        
-        
+
+
+
 
         /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 0) {
@@ -574,7 +682,7 @@ public:
                 spiel_auswahl = 3;
                 SpaceSpielen = true;
                 restart_space();
-               
+
             }
         }
         /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +691,7 @@ public:
 
 
                 ////////////////////////////////////////////////   steuerung wie standart Flappy Bird Spiel    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-                if (!gestorben) {                               
+                if (!gestorben) {
                     if (input().down(Gosu::Button::KB_SPACE) && !spacebar_down) {
                         spacebar_down = true;
                         x_funktion_flappybiene = 0;
@@ -628,7 +736,7 @@ public:
                     //    }
                     //    if (!(input().down(Gosu::Button::KB_DOWN)) && !(input().down(Gosu::Button::KB_UP)) && !(input().down(Gosu::Button::KB_LEFT)))      
                     //        rot = 90;
-                    
+
                     /////////////////////////////////// Steuerung nach schräg oben/unten mit Leertaste   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     //if(input().down(Gosu::Button::KB_SPACE) || score_zaehler > 0.5)             
@@ -657,13 +765,13 @@ public:
                 }
 
 
-                    x1 -= velocity_flappy_biene;           //bewegung der Balken
-                    x2 -= velocity_flappy_biene;
-                    x3 -= velocity_flappy_biene;
-                    x4 -= velocity_flappy_biene;
-                    x5 -= velocity_flappy_biene;
-                    x6 -= velocity_flappy_biene;
-                
+                x1 -= velocity_flappy_biene;           //bewegung der Balken
+                x2 -= velocity_flappy_biene;
+                x3 -= velocity_flappy_biene;
+                x4 -= velocity_flappy_biene;
+                x5 -= velocity_flappy_biene;
+                x6 -= velocity_flappy_biene;
+
 
                 if (x2 < 0) {             //neu spawnen der Balken mit random Werten für Loch, das Biene durchqueren muss
                     x1 = x5 + x_verschiebung;
@@ -708,7 +816,7 @@ public:
                     got_score_2_flappybiene = false;
                 if (x_player_flappybiene > x6)
                     got_score_3_flappybiene = false;
-                
+
 
                 if (score == speed_increase_at_score) {             //wenn bestimmter Score erreicht wird, steigt Geschwindigkeit, Score_increase -> passiert alle 50 Score Punkte
                     velocity_flappy_biene++;
@@ -745,7 +853,7 @@ public:
                     spiel_auswahl = 0;
                 }
             }
-        }       
+        }
         ////////////////////////////////SNAKE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 2) {
 
@@ -786,52 +894,52 @@ public:
 
 
             if (input().down(Gosu::Button::KB_RIGHT) || rechts) {
-                    if (snake.size() > 1) {
-                        if (!snake.at(1).oben_out_of_screen && !snake.at(1).unten_out_of_screen && !links) {
+                if (snake.size() > 1) {
+                    if (!snake.at(1).oben_out_of_screen && !snake.at(1).unten_out_of_screen && !links) {
 
-                            rechts = true; links = false; oben = false; unten = false;
-                            snake.at(0).richtung = 1;
-                            
-                        }
-                    }
-                    else {
                         rechts = true; links = false; oben = false; unten = false;
                         snake.at(0).richtung = 1;
+
                     }
-                    
-                
+                }
+                else {
+                    rechts = true; links = false; oben = false; unten = false;
+                    snake.at(0).richtung = 1;
+                }
+
+
             }
             if (input().down(Gosu::Button::KB_LEFT) || links) {
-                    if (snake.size() > 1) {
-                        if (!snake.at(1).oben_out_of_screen && !snake.at(1).unten_out_of_screen && !rechts) {                           
-                            rechts = false; links = true; oben = false; unten = false;
-                            snake.at(0).richtung = 2;
-                        }                        
-                    }
-                    else {
+                if (snake.size() > 1) {
+                    if (!snake.at(1).oben_out_of_screen && !snake.at(1).unten_out_of_screen && !rechts) {
                         rechts = false; links = true; oben = false; unten = false;
                         snake.at(0).richtung = 2;
                     }
-                
+                }
+                else {
+                    rechts = false; links = true; oben = false; unten = false;
+                    snake.at(0).richtung = 2;
+                }
+
 
             }
-            if (input().down(Gosu::Button::KB_UP) || oben) {              
-                    if (snake.size() > 1) {
-                        if (!snake.at(1).rechts_out_of_screen && !snake.at(1).links_out_of_screen && !unten) {
-                            rechts = false; links = false; oben = true; unten = false;
-                            snake.at(0).richtung = 3;
-                        }
-                    }
-                    else {
+            if (input().down(Gosu::Button::KB_UP) || oben) {
+                if (snake.size() > 1) {
+                    if (!snake.at(1).rechts_out_of_screen && !snake.at(1).links_out_of_screen && !unten) {
                         rechts = false; links = false; oben = true; unten = false;
                         snake.at(0).richtung = 3;
                     }
-                
+                }
+                else {
+                    rechts = false; links = false; oben = true; unten = false;
+                    snake.at(0).richtung = 3;
+                }
+
             }
             if (input().down(Gosu::Button::KB_DOWN) || unten) {
                 if (snake.size() > 1) {
                     if (!snake.at(1).rechts_out_of_screen && !snake.at(1).links_out_of_screen && !oben) {
-                        rechts = false; links = false; oben = false; unten = true;      
+                        rechts = false; links = false; oben = false; unten = true;
                         snake.at(0).richtung = 4;
                     }
                 }
@@ -839,22 +947,22 @@ public:
                     rechts = false; links = false; oben = false; unten = true;
                     snake.at(0).richtung = 4;
                 }
-                
+
             }
 
-                snake.at(0).rechts_out_of_screen = false;
+            snake.at(0).rechts_out_of_screen = false;
 
-                snake.at(0).links_out_of_screen = false;
+            snake.at(0).links_out_of_screen = false;
 
-                snake.at(0).oben_out_of_screen = false;
+            snake.at(0).oben_out_of_screen = false;
 
-                snake.at(0).unten_out_of_screen = false;
+            snake.at(0).unten_out_of_screen = false;
 
 
 
             if (!pause) {
                 if (rechts){
-                    
+
                     snake.at(0).x_pos += velocity_snake;
 
                     if (snake.at(0).x_pos > 990) {
@@ -862,12 +970,12 @@ public:
                         if (snake.size() > 1)
                             snake.at(0).rechts_out_of_screen = true;
                     }
-                        
-                    
+
+
                 }
                 if (links) {
                     snake.at(0).x_pos -= velocity_snake;
-                    
+
                     if (snake.at(0).x_pos < 10) {
                         snake.at(0).x_pos = 1010;
                         if (snake.size() > 1)
@@ -876,7 +984,7 @@ public:
                 }
                 if (oben) {
                     snake.at(0).y_pos -= velocity_snake;
-                    
+
                     if (snake.at(0).y_pos < 10) {
                         snake.at(0).y_pos = 610;
                         if (snake.size() > 1)
@@ -911,7 +1019,7 @@ public:
                                 it_außen_hinten->y_pos = it_außen_vorn->y_pos;
                             }
                             if (reingefahren_snake) {
-                               if (it_außen_hinten->richtung == 1)
+                                if (it_außen_hinten->richtung == 1)
                                     it_außen_hinten->x_pos += velocity_snake;
                                 if (it_außen_vorn->richtung == 2)
                                     it_außen_hinten->x_pos -= velocity_snake;
@@ -1024,57 +1132,56 @@ public:
                 }
             }
 
-        }      
+        }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (spiel_auswahl == 3) {
             if (!gestorben) {
-                if (SpaceScore % Space_Speed_increase_at == 0 && Space_Speed_increase) {
+                if (SpaceScore % Space_Speed_increase_at == 0 && Space_Speed_increase /* && SpaceScore <= 30*/) {
                     SpaceSpeed = SpaceSpeed * SpaceSpeedincrease;
                     Space_Speed_increase = false;
                 }
                 AstAnzahl--;
                 stachelzahl++;
-                
-                if (input().down(Gosu::Button::KB_UP)) {
+
+                if (input().down(Gosu::Button::KB_UP) && SpaceBeeY >= 0) {
                     SpaceBeeY -= (SpaceSpeed + 2);
                 }
-                else if (input().down(Gosu::Button::KB_DOWN)) {
+                else if (input().down(Gosu::Button::KB_DOWN) && SpaceBeeY <= 600) {
                     SpaceBeeY += SpaceSpeed + 2;
                 }
                 if (AstAnzahl <= 1) {
                     AstAnzahl = 30;
                     erstelleAsteroid(Asteroiden);
-                    
-                       
+
+
                 }
-                if (input().down(Gosu::Button::KB_SPACE)&& stachelzahl>=20) {
+                if (input().down(Gosu::Button::KB_SPACE) && stachelzahl >= int(100 / SpaceSpeed)) {
                     stachel.push_back(neuerStachel(SpaceBeeX, SpaceBeeY));
                     stachelzahl = 0;
                 }
-                AstInRange(); 
+                AstInRange();
                 StachelBewegen();
                 AsteroidenBewegen();
             }
             else if (maus_x >= 410 && maus_x <= 590 && maus_y >= 270 && maus_y <= 330 && !spielstatus && input().down(Gosu::Button::MS_LEFT) && !initial_start) {		//restart Button gedrückt
-                restart_space();  
+                restart_space();
                 gestorben = false;
                 return;
             }
             else if (maus_x >= 700 && maus_x <= 960 && maus_y >= 40 && maus_y <= 100 && input().down(Gosu::Button::MS_LEFT)) {               //Auswahlbildschrim ausgewählt
                 spiel_auswahl = 0;
             }
-            
-            
 
-            if (SpaceBeeY > 600 || SpaceBeeY< 0)              //Abfrage, ob man außerhalb den Bildschirms geflogen ist->Game Over
-                gestorben = true;
+
+
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
-};
+    };
 
 
-// C++ Hauptprogramm
+    // C++ Hauptprogramm
 
 int main()
 {
