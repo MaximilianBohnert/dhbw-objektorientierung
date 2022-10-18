@@ -300,7 +300,7 @@ public:
             else {
                 for (int st = 0; st < stachel.size(); st++) {
                     if (stachel.at(st).stachelX >= Asteroiden.at(ast).AsteroidX && stachel.at(st).stachelX <= Asteroiden.at(ast).AsteroidX + Asteroiden.at(ast).AsteroidBreite
-                        && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY+ Asteroiden.at(ast).AsteroidLaenge + stachel.at(st).StachelHoehe)&& (stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY ))) {
+                        && stachel.at(st).stachelY <= (Asteroiden.at(ast).AsteroidY+ Asteroiden.at(ast).AsteroidLaenge + stachel.at(st).StachelHoehe)&& (stachel.at(st).stachelY >= (Asteroiden.at(ast).AsteroidY ))&& Asteroiden.at(ast).leben>0) {
                         SpaceScore++;
                         Space_Speed_increase = true;
                         //Asteroiden.at(ast).hit = true;
